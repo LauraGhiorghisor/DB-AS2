@@ -18,7 +18,8 @@ SHOW ERRORS;
 -- contact_varray_type
 CREATE OR REPLACE TYPE contact_varray_type AS VARRAY(10) OF contact_type;
 /
--- date_type
+
+-- date_varray_type
 CREATE OR REPLACE TYPE date_varray_type AS VARRAY(5) OF DATE;
 /
 SHOW ERRORS;
@@ -113,7 +114,6 @@ START WITH 1;
 CREATE SEQUENCE seq_tickets
 INCREMENT BY 1
 START WITH 1;
-
 
 -- COMMIT CHANGES
 COMMIT;
