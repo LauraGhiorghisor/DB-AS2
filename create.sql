@@ -13,10 +13,12 @@ CREATE OR REPLACE TYPE contact_type AS OBJECT (
     description VARCHAR2(100),
     additional_details VARCHAR2(100));
 /
+SHOW ERRORS;
 
 -- contact_varray_type
 CREATE OR REPLACE TYPE contact_varray_type AS VARRAY(4) OF contact_type;
 /
+SHOW ERRORS;
 
 -- activity_type
 CREATE OR REPLACE TYPE activity_type AS OBJECT (
@@ -77,9 +79,9 @@ CREATE TABLE experiences (
     NESTED TABLE activites STORE AS activity_table;
 
 CREATE TABLE tickets (
-    ticket_id NUMBER(6),
-    experience_id NUMBER(6) NOT NULL,
-    sponsor_id NUMBER(6) NOT NULL,
+    experience_id NUMBER(6),
+    sponsor_id NUMBER(6),
+    ticket_number NUMBER(6),
     start_date DATE,
     end_date DATE,
     price NUMBER(6,2));
