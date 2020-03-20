@@ -1,7 +1,246 @@
 /*
 * CSY2038 Databases 2 - Assignment 2
 * Group 5
-* Alexander Turner (18416709), Daiana Gusatu (), Laura Ghiorghisor ()
+* Alexander Turner (18416709), Daiana Gusatu (18424099), Laura Ghiorghisor (18408400)
 */
 
 -- @C:\DB-AS2\insert.sql
+-- @/Users/Laura/csy2038/DB-AS2/insert.sql
+
+
+
+-- Inserts
+
+--Addresses TABLE
+INSERT INTO addresses(house_no, street, city, county, postcode, country)
+VALUES('17 ALPHA HOUSE', 'ANDERSON STREET', 'ABERDEEN', 'ABERDEENSHIRE', 'AB33 7LG', 'SCOTLAND');
+
+INSERT INTO addresses(house_no, street, city, county, postcode, country)
+VALUES('26 ALWOOD BUILDING', 'BENJAMIN STREET', 'BATH', 'SOMERSET', 'BA3 7TY', 'UK');
+
+INSERT INTO addresses(house_no, street, city, county, postcode, country)
+VALUES('33', 'CECIL STREET', 'CAMBRIDGE', 'CAMBRIDGESHIRE', 'CB5 7YH', 'UK');
+
+INSERT INTO addresses(house_no, street, city, county, postcode, country)
+VALUES('48 DARBY HOUSE', 'DOLBY STREET', 'DERBY', 'DERBYSHIRE', 'DE1 2AW', 'UK');
+
+-- No column specification
+INSERT INTO addresses
+VALUES('52', 'ELMWOOD STREET', 'ELY', 'CAMBRIDGESHIRE', 'CB6 7JK', 'UK');
+
+
+--Experience_nature TABLE
+INSERT INTO experience_nature(experience_nature_id, experience_nature_name, description)
+VALUES(seq_experience_nature.nextval, 'ADVENTURE', 'INCLUDES SKY-DIVING, HELICOPTER RIDES, F1, MOUNTAIN CLIMBING');
+
+INSERT INTO experience_nature(experience_nature_id, experience_nature_name, description)
+VALUES(seq_experience_nature.nextval, 'RELAXING', 'INCLUDES YOGA, MEDITATION SESSIONS, FOREST MOVIE NIGHTS, POOL');
+
+INSERT INTO experience_nature(experience_nature_id, experience_nature_name, description)
+VALUES(seq_experience_nature.nextval, 'FOOD', 'FINE DINING - 200 SEATS, FOOD STALLS - 24 - ASIAN, BRITISH, INDIAN FOOD, WAFFLES, CANDY');
+
+INSERT INTO experience_nature(experience_nature_id, experience_nature_name, description)
+VALUES(seq_experience_nature.nextval, 'DRINK', 'HELICOPTER RIDE WITH CHAMPAGNE (MULTIPLE CHOICES), POOL HIRE WITH CANDLES AND PROSECCO, WINE AND PAINT');
+
+-- No column specification
+INSERT INTO experience_nature
+VALUES(seq_experience_nature.nextval, 'KIDS-WORLD', 'THEMED PARK, CLOWNS, FANTASY CHARACTERS, DISCOUNT FOR MEALS');
+
+
+--Sponsors TABLE
+INSERT INTO sponsors(sponsor_id, sponsor_firstname, sponsor_surname, company_name, address, contact, registration_date)
+VALUES(seq_sponsors.nextval, 'ANDREW', 'ADAMS', 'APPLEWOOD LTD', 
+       address_type('34', 'COPPER STREET', 'CAMBRIDGE', 'CAMBRIDGESHIRE', 'CB2 5EE', 'UK'),
+	   contact_varray_type(
+	                      (contact_type('FACEBOOK', 'APPLEWOOD LTD CAMBRIDGE', 'MESSAGE ONLY M-F 8-5')),
+                          (contact_type('COMPANY PHONE', '01604786332', 'ONLY M-F 8-5')),
+						  (contact_type('EMAIL', 'CONTACT@APPLEWOOD.CO.UK', NULL))), '20-MAY-1997');
+	   
+INSERT INTO sponsors(sponsor_id, sponsor_firstname, sponsor_surname, company_name, address, contact, registration_date)
+VALUES(seq_sponsors.nextval, 'BENJAMIN', 'BROOKLYN', 'BONFIT LTD', 
+       address_type('88', 'BOND STREET', 'BATH', 'SOMERSET', 'BA6 7RE', 'UK'),
+	   contact_varray_type(
+	                      (contact_type('FACEBOOK', 'BONFIT LTD UK', NULL)),
+                          (contact_type('INSTAGRAM', 'BONFITUK', 'NOT USED MUCH')),
+						  (contact_type('EMAIL', 'CONTACT@APPLEWOOD.CO.UK', 'FASTER REPLIES'))), '10-DEC-1984');
+	   
+INSERT INTO sponsors(sponsor_id, sponsor_firstname, sponsor_surname, company_name, address, contact, registration_date)
+VALUES(seq_sponsors.nextval, 'CHAD', 'CROWLEY', 'CHIMNEY SWEEP', 
+       address_type('887 CLAYTON HOUSE', 'CLAYTON STREET', 'CRANFIELD', 'BEDFORDSHIRE', 'BE15 7EG', 'UK'),
+	   contact_varray_type(
+	                      (contact_type('FACEBOOK', 'CHIMNEY SWEEP BEDFORD', NULL)),
+                          (contact_type('INSTAGRAM', 'CHIMSWEEPUK', NULL)),
+						  (contact_type('TWITTER', 'CHIMSWEEPBED', 'MANY POSTS'))), '15-DEC-2001');	
+
+-- Inserts default registration_date as SYSDATE
+INSERT INTO sponsors(sponsor_id, sponsor_firstname, sponsor_surname, company_name, address, contact, registration_date)
+VALUES(seq_sponsors.nextval, 'DARREN', 'DOOLEY', 'DD', 
+       address_type('828', 'DELAPRE STREET', 'DAVENTRY', 'NORTHAMPTONSHIRE', 'NN11 5TS', 'UK'),
+	   contact_varray_type(
+	                      (contact_type('FACEBOOK', 'DD IN DAVENTRY', NULL)),
+                          (contact_type('INSTAGRAM', 'DDDAVENTRY', 'DAILY POSTS')),
+						  (contact_type('EMAIL', 'DARREN@DDDAVENTRY.CO.UK', 'FASTER REPLIES IN THE EVENING'))), '30-MAR-1994');	  
+
+-- No column specification: must provide registration_date
+INSERT INTO sponsors
+VALUES(seq_sponsors.nextval, 'ELY', 'EXETER', 'ECOMMERCE UK', 
+       address_type('75', 'EASTER ROAD', 'KETTERING', 'NORTHAMPTONSHIRE', 'NN7 5EF', 'UK'),
+	   contact_varray_type(
+	                      (contact_type('FACEBOOK', 'ECOMMERCE UK', NULL)),
+                          (contact_type('PERSONAL PHONE', '07534672889', 'CAN CALL EVEN AFTER 6 PM')),
+						  (contact_type('EMAIL', 'ELY@ECOMMERCE.CO.UK', 'FASTER REPLIES'))), '20-MAR-2020');	   
+
+
+
+--Locations TABLE
+
+-- using update
+INSERT INTO locations(location_id, description)
+VALUES(seq_locations.nextval, 'IDEAL FOR CHILDREN AGED 1-16, PLENTY OF WATER FOUNTAINS, GAMES, RESTAURANTS');
+
+UPDATE locations SET address = 
+(SELECT REF(a) FROM addresses a
+WHERE a.street = 'ANDERSON STREET')
+WHERE location_id = 1;
+
+INSERT INTO locations(location_id, description)
+VALUES(seq_locations.nextval, 'HELICOPTER AND SKY DIVING LEAVING POINT');
+
+UPDATE locations SET address = 
+(SELECT REF(a) FROM addresses a
+WHERE a.street = 'BENJAMIN STREET')
+WHERE location_id = 2;
+
+-- using regular insert
+INSERT INTO locations(location_id, description, address)
+SELECT seq_locations.nextval, 'HOTEL WITH SPA, POOL, SAUNA, 5 STARS', REF(a)
+FROM addresses a
+WHERE a.street = 'CECIL STREET';
+
+INSERT INTO locations(location_id, description, address)
+SELECT seq_locations.nextval, 'A LA CARTE RESTAURANT, VARIOUS CHOICES. PLENTY OF PARKING', REF(a)
+FROM addresses a
+WHERE a.street = 'DOLBY STREET';
+
+INSERT INTO locations(location_id, description, address)
+SELECT seq_locations.nextval, 'LOCATION HAS WINE CELLAR, BAR WITH MULTIPLE SPIRITS AND SNACKS', REF(a)
+FROM addresses a
+WHERE a.street = 'ELMWOOD STREET';
+
+--Experiences Table
+INSERT INTO experiences(experience_id, experience_nature_id, experience_name, season, experience_date, location_id, description, activities)
+VALUES(seq_experiences.nextval, 1, 'LUXURY DINNER FOR 4', 'ALL SEASONS', date_varray_type('16-NOV-2019', '23-JAN-2020'), 1, 'OFFER DISCOUNT FOR PURCHASES ON OVER 500 POUNDS', 
+activity_table_type(
+                    activity_type('ROMANTIC DINNER', 150.00, 3, date_varray_type('16-NOV-2016', '16-NOV-2022')),
+					activity_type('BOTTLE OF PROSECCO', 60.00, 1, date_varray_type('16-NOV-2016', '16-NOV-2022')))
+	  );
+	  
+INSERT INTO experiences(experience_id, experience_nature_id, experience_name, season, experience_date, location_id, description, activities)
+VALUES(seq_experiences.nextval, 2, 'COMEDY NIGHT', 'WINTER', date_varray_type('01-NOV-2019', '01-MAR-2020'), 2, NULL, 
+activity_table_type(
+                    activity_type('PHOTOS WITH THE ARTIST', 80.00, 3, date_varray_type('01-NOV-2019', '01-MAR-2020')),
+					activity_type('MEAL AND DRINKS', 70.00, 3, date_varray_type('01-NOV-2019', '01-MAR-2020')))
+	  );	  
+	  
+INSERT INTO experiences(experience_id, experience_nature_id, experience_name, season, experience_date, location_id, description, activities)
+VALUES(seq_experiences.nextval, 3, 'HELICOPTER RIDE', 'SUMMER', date_varray_type('01-MAY-2020', '01-SEP-2020'), 3, 'MAX OF 2 PEOPLE PLUS STAFF,  PHOTOS INCLUDED', 
+activity_table_type(
+                    activity_type('DRINKS', 100.00, 1, date_varray_type('01-MAY-2020', '01-SEP-2020')),
+					activity_type('VIDEO RECORDING', 200.00, 1, date_varray_type('01-MAY-2020', '01-SEP-2020')))
+	  );
+
+INSERT INTO experiences(experience_id, experience_nature_id, experience_name, season, experience_date, location_id, description, activities)
+VALUES(seq_experiences.nextval, 4, 'AFTERNOON TEA', 'ALL SEASONS', date_varray_type('01-JAN-2020', '01-APR-2020','01-SEP-2020'), 4, 'GLUTEN FREE, VEGAN, SUGAR FREE ALSO', 
+activity_table_type(
+                    activity_type('DRINKS', 40.00, 1, date_varray_type('01-JAN-2020', '01-APR-2020','01-SEP-2020')),
+					activity_type('MEALS', 50.00, 3, date_varray_type('01-JAN-2020', '01-APR-2020','01-SEP-2020')))
+	  );
+-- No column specification.
+INSERT INTO experiences
+VALUES(seq_experiences.nextval, 5, 'BAKING', 'SPRING', date_varray_type('01-MAR-2020', '01-SEP-2020'), 5, 'GLUTEN FREE, VEGAN, SUGAR FREE ALSO. HEALTH AND SAFETY TRAINING', 
+activity_table_type(
+                    activity_type('WINE', 30.00, 1, date_varray_type('01-MAR-2020', '01-SEP-2020')),
+					activity_type('BRING A FRIEND', 20.00, 0, date_varray_type('01-MAR-2020', '01-SEP-2020')))
+	  );
+	  
+	  
+--Tickets TABLE
+INSERT INTO tickets(ticket_number, experience_id, sponsor_id, ticket_date, price)
+VALUES(seq_tickets.nextval, 1, 1, date_varray_type('01-MAY-2020', '01-SEP-2020'), 160.00);
+
+INSERT INTO tickets(ticket_number, experience_id, sponsor_id, ticket_date, price)
+VALUES(seq_tickets.nextval, 2, 2, date_varray_type('01-APR-2020','01-SEP-2020', '07-Jun-2020'), 40.00);
+
+INSERT INTO tickets(ticket_number, experience_id, sponsor_id, ticket_date, price)
+VALUES(seq_tickets.nextval, 3, 3, date_varray_type('01-NOV-2019', '01-MAR-2020'), 260.00);
+
+INSERT INTO tickets(ticket_number, experience_id, sponsor_id, ticket_date, price)
+VALUES(seq_tickets.nextval, 4, 4, date_varray_type('01-MAY-2020', '01-SEP-2020'), 45.00);
+
+INSERT INTO tickets(ticket_number, experience_id, sponsor_id, ticket_date, price)
+VALUES(seq_tickets.nextval, 5, 5, date_varray_type('31-MAY-2020', '11-SEP-2020'), 80.00);
+
+
+-- testing inserts
+SELECT * FROM addresses;
+SELECT * FROM experience_nature;
+SELECT * FROM sponsors;
+SELECT * FROM locations;
+SELECT * FROM experiences;
+SELECT * FROM tickets;
+
+-- testing constraints 
+
+-- PK constraint
+INSERT INTO tickets(ticket_number, experience_id, sponsor_id, ticket_date, price)
+VALUES(1, 1, 1, date_varray_type('01-MAY-2020', '01-SEP-2020'), 160.00);
+-- unique constraint (CSY2038_152.PK_TICKETS) violated
+
+-- PK constraint
+INSERT INTO experience_nature(experience_nature_id, experience_nature_name, description)
+VALUES(1, 'ADVENTURE', 'INCLUDES SKY-DIVING, HELICOPTER RIDES, F1, MOUNTAIN CLIMBING');
+-- unique constraint (CSY2038_152.PK_EXPERIENCE_NATURE) violated
+
+-- CK constraint
+INSERT INTO sponsors(sponsor_id, sponsor_firstname, sponsor_surname, company_name)
+VALUES(seq_sponsors.nextval, 'andrew', 'ADAMS', 'APPLEWOOD LTD');
+-- check constraint (CSY2038_152.CK_SPONSOR_FIRSTNAME) violated
+
+-- CK constraint
+INSERT INTO sponsors(sponsor_id, sponsor_firstname, sponsor_surname, company_name)
+VALUES(seq_sponsors.nextval, 'ANDREW', 'adams', 'APPLEWOOD LTD');
+-- check constraint (CSY2038_152.CK_SPONSOR_SURNAME) violated
+
+-- CK constraint
+INSERT INTO sponsors(sponsor_id, sponsor_firstname, sponsor_surname, company_name)
+VALUES(seq_sponsors.nextval, 'ANDREW', 'ADAMS', 'applewood LTD');
+-- check constraint (CSY2038_152.CK_COMPANY_NAME) violated
+
+-- DEFAULT constraint
+SELECT sponsor_id, registration_date FROM sponsors WHERE sponsor_id = 4;
+--  20-MAR-20 (at the time of testing) / current date
+
+-- NOT NULL
+INSERT INTO experiences (experience_id, experience_nature_id, experience_name, season)
+VALUES(seq_experiences.nextval, 5, 'BAKING', 'NOT A SEASON');
+--  cannot insert NULL into ("CSY2038_152"."EXPERIENCES"."LOCATION_ID")
+
+-- IN - season
+INSERT INTO experiences
+VALUES(seq_experiences.nextval, 5, 'BAKING', 'NOT A SEASON', date_varray_type('01-MAR-2020', '01-SEP-2020'), 5, 'GLUTEN FREE, VEGAN, SUGAR FREE ALSO. HEALTH AND SAFETY TRAINING', 
+activity_table_type(
+                    activity_type('WINE', 30.00, 1, date_varray_type('01-MAR-2020', '01-SEP-2020')),
+					activity_type('BRING A FRIEND', 20.00, 0, date_varray_type('01-MAR-2020', '01-SEP-2020')))
+	  );
+--  check constraint (CSY2038_152.CK_SEASON) violated
+
+-- BETWEEN - price
+INSERT INTO tickets(ticket_number, experience_id, sponsor_id, ticket_date, price)
+VALUES(seq_tickets.nextval, 4, 4, date_varray_type('01-MAY-2020', '01-SEP-2020'), -45.00);
+--  check constraint (CSY2038_152.CK_PRICE) violated
+INSERT INTO tickets(ticket_number, experience_id, sponsor_id, ticket_date, price)
+VALUES(seq_tickets.nextval, 4, 4, date_varray_type('01-MAY-2020', '01-SEP-2020'), 9999999.01);
+-- check constraint (CSY2038_152.CK_PRICE) violated
+
+
+COMMIT;

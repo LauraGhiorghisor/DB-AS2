@@ -1,10 +1,11 @@
 /*
 * CSY2038 Databases 2 - Assignment 2
 * Group 5
-* Alexander Turner (18416709), Daiana Gusatu (), Laura Ghiorghisor ()
+* Alexander Turner (18416709), Daiana Gusatu (18424099), Laura Ghiorghisor (18408400)
 */
 
 -- @C:\DB-AS2\alter.sql
+-- @/Users/Laura/csy2038/DB-AS2/alter.sql
 
 -- PRIMARY KEYS
 -- pk_sponsors
@@ -30,7 +31,7 @@ PRIMARY KEY (experience_id);
 -- pk_tickets
 ALTER TABLE tickets
 ADD CONSTRAINT pk_tickets
-PRIMARY KEY (ticket_number, sponsor_id, experience_id;
+PRIMARY KEY (ticket_number, sponsor_id, experience_id);
 
 -- FOREIGN KEYS
 -- fk_e_experience_nature
@@ -57,23 +58,36 @@ ADD CONSTRAINT fk_t_sponsors
 FOREIGN KEY (sponsor_id)
 REFERENCES sponsors(sponsor_id);
 
--- CHECK CONSTRAINTS
+-- CHECK, UNIQUE and DEFAULT CONSTRAINTS
 -- sponsors
 ALTER TABLE sponsors
 ADD CONSTRAINT ck_sponsor_firstname
-CHECK (sponsor_firstname = UPPER(sponsor_firstname))
+CHECK (sponsor_firstname = UPPER(sponsor_firstname));
 
 ALTER TABLE sponsors
 ADD CONSTRAINT ck_sponsor_surname
-CHECK (sponsor_surname = UPPER(sponsor_surname))
+CHECK (sponsor_surname = UPPER(sponsor_surname));
 
 ALTER TABLE sponsors
 ADD CONSTRAINT ck_company_name
-CHECK (company_name = UPPER(company_name))
+CHECK (company_name = UPPER(company_name));
+
+ALTER TABLE experiences
+ADD CONSTRAINT ck_season
+CHECK (season IN ('WINTER', 'SPRING', 'SUMMER', 'AUTUMN', 'ALL SEASONS'));
+
+ALTER TABLE tickets
+ADD CONSTRAINT ck_price
+CHECK (price BETWEEN 0 AND 9999999.00);
 
 ALTER TABLE sponsors
-ADD CONSTRAINT ck_description
-CHECK (description = UPPER(description))
+MODIFY registration_date DEFAULT SYSDATE;
+
+ALTER TABLE experience_nature
+ADD CONSTRAINT uq_xp_nature_name
+UNIQUE (experience_nature_name);
+
 
 -- COMMIT CHANGES
 COMMIT;
+

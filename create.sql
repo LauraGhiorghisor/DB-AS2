@@ -1,10 +1,11 @@
 /*
 * CSY2038 Databases 2 - Assignment 2
 * Group 5
-* Alexander Turner (18416709), Daiana Gusatu (), Laura Ghiorghisor ()
+* Alexander Turner (18416709), Daiana Gusatu (18424099), Laura Ghiorghisor (18408400)
 */
 
 -- @C:\DB-AS2\create.sql
+-- @/Users/Laura/csy2038/DB-AS2/create.sql
 
 -- CREATE TYPES
 -- contact_type
@@ -20,14 +21,14 @@ CREATE OR REPLACE TYPE contact_varray_type AS VARRAY(10) OF contact_type;
 /
 
 -- date_varray_type
-CREATE OR REPLACE TYPE date_varray_type AS VARRAY(5) OF DATE;
+CREATE OR REPLACE TYPE date_varray_type AS VARRAY(10) OF DATE;
 /
 SHOW ERRORS;
 
 -- activity_type
 CREATE OR REPLACE TYPE activity_type AS OBJECT (
     activity_name VARCHAR2(30),
-    cost NUMBER(20,2),
+    cost NUMBER(9,2),
     no_staff_needed NUMBER(6),
     activity_date date_varray_type);
 /
@@ -44,7 +45,7 @@ CREATE OR REPLACE TYPE address_type AS OBJECT (
     city VARCHAR2(25),
     county VARCHAR2(30),
     postcode VARCHAR2(8),
-    country VARCHAR2(20) DEFAULT 'UK');
+    country VARCHAR2(20));
 /
 SHOW ERRORS;
 
@@ -78,15 +79,15 @@ CREATE TABLE experiences (
     experience_date date_varray_type,
     location_id NUMBER(6) NOT NULL,
     description VARCHAR2(200),
-    activites activity_table_type)
-    NESTED TABLE activites STORE AS activities_table;
+    activities activity_table_type)
+    NESTED TABLE activities STORE AS activities_table;
 
 CREATE TABLE tickets (
     ticket_number NUMBER(6),
     experience_id NUMBER(6),
     sponsor_id NUMBER(6),
     ticket_date date_varray_type,
-    price NUMBER(6,2));
+    price NUMBER(12,2));
 
 -- CREATE SEQUENCES
 -- seq_sponsors
@@ -116,3 +117,22 @@ START WITH 1;
 
 -- COMMIT CHANGES
 COMMIT;
+
+
+-- testing
+SELECT table_name from user_tables;
+DESC tickets;
+DESC sponsors;
+DESC locations;
+DESC addresses;
+DESC experiences;
+
+
+SELECT OBJECT_NAME, OBJECT_TYPE 
+    FROM USER_OBJECTS;
+DESC contact_type;
+DESC contact_varray_type;
+DESC date_varray_type;
+DESC activity_type;
+DESC activity_table_type;
+DESC address_type;
