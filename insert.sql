@@ -49,7 +49,7 @@ VALUES(seq_experience_nature.nextval, 'KIDS-WORLD', 'THEMED PARK, CLOWNS, FANTAS
 
 --Sponsors TABLE
 INSERT INTO sponsors(sponsor_id, sponsor_firstname, sponsor_surname, company_name, address, contact, registration_date)
-VALUES(seq_sponsors.nextval, 'ANDREW', 'ADAMS', 'APPLEWOOD LTD', 
+VALUES(seq_sponsors.nextval, UPPER('ANDREW'), UPPER('ADAMS'), UPPER('APPLEWOOD LTD'), 
        address_type('34', 'COPPER STREET', 'CAMBRIDGE', 'CAMBRIDGESHIRE', 'CB2 5EE', 'UK'),
 	   contact_varray_type(
 	                      (contact_type('FACEBOOK', 'APPLEWOOD LTD CAMBRIDGE', 'MESSAGE ONLY M-F 8-5')),
@@ -129,56 +129,61 @@ WHERE a.street = 'ELMWOOD STREET';
 
 --Experiences Table
 INSERT INTO experiences(experience_id, experience_nature_id, experience_name, season, experience_date, location_id, description, activities)
-VALUES(seq_experiences.nextval, 1, 'LUXURY DINNER FOR 4', 'ALL SEASONS', date_varray_type('16-NOV-2019', '23-JAN-2020'), 1, 'OFFER DISCOUNT FOR PURCHASES ON OVER 500 POUNDS', 
+VALUES(seq_experiences.nextval, 1, 'LUXURY DINNER FOR 4', 'AUTUMN', date_varray_type('16-NOV-2019', '17-NOV-2020'), 1, 'OFFER DISCOUNT FOR PURCHASES ON OVER 500 POUNDS', 
 activity_table_type(
-                    activity_type('ROMANTIC DINNER', 150.00, 3, date_varray_type('16-NOV-2016', '16-NOV-2022')),
-					activity_type('BOTTLE OF PROSECCO', 60.00, 1, date_varray_type('16-NOV-2016', '16-NOV-2022')))
+                    activity_type('ROMANTIC DINNER', 3, date_varray_type('16-NOV-2020', '16-NOV-2020')),
+					activity_type('AFTERNOON TEA', 3, date_varray_type('17-NOV-2020', '17-NOV-2020')))
 	  );
 	  
 INSERT INTO experiences(experience_id, experience_nature_id, experience_name, season, experience_date, location_id, description, activities)
-VALUES(seq_experiences.nextval, 2, 'COMEDY NIGHT', 'WINTER', date_varray_type('01-NOV-2019', '01-MAR-2020'), 2, NULL, 
+VALUES(seq_experiences.nextval, 2, 'COMEDY NIGHT', 'WINTER', date_varray_type('01-NOV-2019', '01-NOV-2019'), 2, NULL, 
 activity_table_type(
-                    activity_type('PHOTOS WITH THE ARTIST', 80.00, 3, date_varray_type('01-NOV-2019', '01-MAR-2020')),
-					activity_type('MEAL AND DRINKS', 70.00, 3, date_varray_type('01-NOV-2019', '01-MAR-2020')))
+					activity_type('COMEDY SHOW', 0, date_varray_type('01-NOV-2019', '01-NOV-2019')),
+                    activity_type('PHOTOS WITH THE ARTIST', 3, date_varray_type('01-NOV-2019', '01-NOV-2019')),
+					activity_type('MEAL AND DRINKS', 3, date_varray_type('01-NOV-2019', '01-NOV-2019')))
 	  );	  
 	  
 INSERT INTO experiences(experience_id, experience_nature_id, experience_name, season, experience_date, location_id, description, activities)
-VALUES(seq_experiences.nextval, 3, 'HELICOPTER RIDE', 'SUMMER', date_varray_type('01-MAY-2020', '01-SEP-2020'), 3, 'MAX OF 2 PEOPLE PLUS STAFF,  PHOTOS INCLUDED', 
+VALUES(seq_experiences.nextval, 3, 'HELICOPTER RIDE', 'SUMMER', date_varray_type('01-MAY-2020', '02-MAY-2020'), 3, 'MAX OF 2 PEOPLE PLUS STAFF,  PHOTOS INCLUDED', 
 activity_table_type(
-                    activity_type('DRINKS', 100.00, 1, date_varray_type('01-MAY-2020', '01-SEP-2020')),
-					activity_type('VIDEO RECORDING', 200.00, 1, date_varray_type('01-MAY-2020', '01-SEP-2020')))
+                    activity_type('PHOTOSHOOT', 1, date_varray_type('01-MAY-2020', '01-MAY-2020')),
+					activity_type('RIDE', 1, date_varray_type('02-MAY-2020', '02-MAY-2020')))
 	  );
 
 INSERT INTO experiences(experience_id, experience_nature_id, experience_name, season, experience_date, location_id, description, activities)
-VALUES(seq_experiences.nextval, 4, 'AFTERNOON TEA', 'ALL SEASONS', date_varray_type('01-JAN-2020', '01-APR-2020','01-SEP-2020'), 4, 'GLUTEN FREE, VEGAN, SUGAR FREE ALSO', 
+VALUES(seq_experiences.nextval, 4, 'AFTERNOON TEA', 'WINTER', date_varray_type('01-JAN-2020', '01-JAN-2020'), 4, 'GLUTEN FREE, VEGAN, SUGAR FREE ALSO', 
 activity_table_type(
-                    activity_type('DRINKS', 40.00, 1, date_varray_type('01-JAN-2020', '01-APR-2020','01-SEP-2020')),
-					activity_type('MEALS', 50.00, 3, date_varray_type('01-JAN-2020', '01-APR-2020','01-SEP-2020')))
+                    activity_type('DRINKS', 1, date_varray_type('01-JAN-2020', '01-JAN-2020')),
+					activity_type('MEALS', 3, date_varray_type('01-JAN-2020', '01-JAN-2020')))
 	  );
 -- No column specification.
 INSERT INTO experiences
-VALUES(seq_experiences.nextval, 5, 'BAKING', 'SPRING', date_varray_type('01-MAR-2020', '01-SEP-2020'), 5, 'GLUTEN FREE, VEGAN, SUGAR FREE ALSO. HEALTH AND SAFETY TRAINING', 
+VALUES(seq_experiences.nextval, 5, 'BAKING', 'SPRING', date_varray_type('01-MAR-2020', '13-MAR-2020'), 5, 'GLUTEN FREE, VEGAN, SUGAR FREE ALSO. HEALTH AND SAFETY TRAINING', 
 activity_table_type(
-                    activity_type('WINE', 30.00, 1, date_varray_type('01-MAR-2020', '01-SEP-2020')),
-					activity_type('BRING A FRIEND', 20.00, 0, date_varray_type('01-MAR-2020', '01-SEP-2020')))
+                    activity_type('TRAINING', 1, date_varray_type('01-MAR-2020', '10-MAR-2020')),
+					activity_type('BRING A FRIEND', 0, date_varray_type('11-MAR-2020', '12-MAR-2020')),
+					activity_type('FINAL BAKEOFF', 0, date_varray_type('13-MAR-2020', '13-MAR-2020')))
 	  );
 	  
 	  
 --Tickets TABLE
-INSERT INTO tickets(ticket_number, experience_id, sponsor_id, ticket_date, price)
-VALUES(seq_tickets.nextval, 1, 1, date_varray_type('01-MAY-2020', '01-SEP-2020'), 160.00);
+INSERT INTO tickets(ticket_number, experience_id, sponsor_id, price)
+VALUES(seq_tickets.nextval, 1, 1, 1000.00);
 
-INSERT INTO tickets(ticket_number, experience_id, sponsor_id, ticket_date, price)
-VALUES(seq_tickets.nextval, 2, 2, date_varray_type('01-APR-2020','01-SEP-2020', '07-Jun-2020'), 40.00);
+INSERT INTO tickets(ticket_number, experience_id, sponsor_id, price)
+VALUES(seq_tickets.nextval, 2, 2, 550.00);
 
-INSERT INTO tickets(ticket_number, experience_id, sponsor_id, ticket_date, price)
-VALUES(seq_tickets.nextval, 3, 3, date_varray_type('01-NOV-2019', '01-MAR-2020'), 260.00);
+INSERT INTO tickets(ticket_number, experience_id, sponsor_id, price)
+VALUES(seq_tickets.nextval, 3, 3, 2000.00);
 
-INSERT INTO tickets(ticket_number, experience_id, sponsor_id, ticket_date, price)
-VALUES(seq_tickets.nextval, 4, 4, date_varray_type('01-MAY-2020', '01-SEP-2020'), 45.00);
+INSERT INTO tickets(ticket_number, experience_id, sponsor_id, price)
+VALUES(seq_tickets.nextval, 3, 3, 2000.00);
 
-INSERT INTO tickets(ticket_number, experience_id, sponsor_id, ticket_date, price)
-VALUES(seq_tickets.nextval, 5, 5, date_varray_type('31-MAY-2020', '11-SEP-2020'), 80.00);
+INSERT INTO tickets(ticket_number, experience_id, sponsor_id, price)
+VALUES(seq_tickets.nextval, 4, 4, 45.00);
+
+INSERT INTO tickets(ticket_number, experience_id, sponsor_id, price)
+VALUES(seq_tickets.nextval, 5, 5, 80.00);
 
 
 -- testing inserts
@@ -192,8 +197,8 @@ SELECT * FROM tickets;
 -- testing constraints 
 
 -- PK constraint
-INSERT INTO tickets(ticket_number, experience_id, sponsor_id, ticket_date, price)
-VALUES(1, 1, 1, date_varray_type('01-MAY-2020', '01-SEP-2020'), 160.00);
+INSERT INTO tickets(ticket_number, experience_id, sponsor_id, price)
+VALUES(1, 1, 1, 160.00);
 -- unique constraint (CSY2038_152.PK_TICKETS) violated
 
 -- PK constraint
@@ -227,19 +232,19 @@ VALUES(seq_experiences.nextval, 5, 'BAKING', 'NOT A SEASON');
 
 -- IN - season
 INSERT INTO experiences
-VALUES(seq_experiences.nextval, 5, 'BAKING', 'NOT A SEASON', date_varray_type('01-MAR-2020', '01-SEP-2020'), 5, 'GLUTEN FREE, VEGAN, SUGAR FREE ALSO. HEALTH AND SAFETY TRAINING', 
+VALUES(seq_experiences.nextval, 5, 'BAKING', 'NOT A SEASON', date_varray_type('01-MAR-2020', '01-MAR-2020'), 5, 'GLUTEN FREE, VEGAN, SUGAR FREE ALSO. HEALTH AND SAFETY TRAINING', 
 activity_table_type(
-                    activity_type('WINE', 30.00, 1, date_varray_type('01-MAR-2020', '01-SEP-2020')),
-					activity_type('BRING A FRIEND', 20.00, 0, date_varray_type('01-MAR-2020', '01-SEP-2020')))
+                    activity_type('WINE', 30.00, 1, date_varray_type('01-MAR-2020', '01-MAR-2020')),
+					activity_type('BRING A FRIEND', 20.00, 0, date_varray_type('01-MAR-2020', '01-MAR-2020')))
 	  );
 --  check constraint (CSY2038_152.CK_SEASON) violated
 
 -- BETWEEN - price
-INSERT INTO tickets(ticket_number, experience_id, sponsor_id, ticket_date, price)
-VALUES(seq_tickets.nextval, 4, 4, date_varray_type('01-MAY-2020', '01-SEP-2020'), -45.00);
+INSERT INTO tickets(ticket_number, experience_id, sponsor_id, price)
+VALUES(seq_tickets.nextval, 4, 4, -45.00);
 --  check constraint (CSY2038_152.CK_PRICE) violated
-INSERT INTO tickets(ticket_number, experience_id, sponsor_id, ticket_date, price)
-VALUES(seq_tickets.nextval, 4, 4, date_varray_type('01-MAY-2020', '01-SEP-2020'), 9999999.01);
+INSERT INTO tickets(ticket_number, experience_id, sponsor_id, price)
+VALUES(seq_tickets.nextval, 4, 4, 9999999.01);
 -- check constraint (CSY2038_152.CK_PRICE) violated
 
 

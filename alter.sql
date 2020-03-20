@@ -74,7 +74,7 @@ CHECK (company_name = UPPER(company_name));
 
 ALTER TABLE experiences
 ADD CONSTRAINT ck_season
-CHECK (season IN ('WINTER', 'SPRING', 'SUMMER', 'AUTUMN', 'ALL SEASONS'));
+CHECK (season IN ('WINTER', 'SPRING', 'SUMMER', 'AUTUMN'));
 
 ALTER TABLE tickets
 ADD CONSTRAINT ck_price

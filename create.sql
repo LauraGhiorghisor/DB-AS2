@@ -21,14 +21,13 @@ CREATE OR REPLACE TYPE contact_varray_type AS VARRAY(10) OF contact_type;
 /
 
 -- date_varray_type
-CREATE OR REPLACE TYPE date_varray_type AS VARRAY(10) OF DATE;
+CREATE OR REPLACE TYPE date_varray_type AS VARRAY(2) OF DATE;
 /
 SHOW ERRORS;
 
 -- activity_type
 CREATE OR REPLACE TYPE activity_type AS OBJECT (
     activity_name VARCHAR2(30),
-    cost NUMBER(9,2),
     no_staff_needed NUMBER(6),
     activity_date date_varray_type);
 /
@@ -86,8 +85,7 @@ CREATE TABLE tickets (
     ticket_number NUMBER(6),
     experience_id NUMBER(6),
     sponsor_id NUMBER(6),
-    ticket_date date_varray_type,
-    price NUMBER(12,2));
+    price NUMBER(9,2));
 
 -- CREATE SEQUENCES
 -- seq_sponsors

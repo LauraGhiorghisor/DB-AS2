@@ -1,15 +1,9 @@
 -- must ADD COLUMN FORMATTING 
 
 
--- Nested Table
-COLUMN column_name HEADING column_heading
-COLUMN SALARY HEADING 'MONTHLY|SALARY'
-COLUMN experience_id FORMAT A2
-COLUMN COMMISSION_PCT LIKE SALARY HEADING BONUS
-COLUMN JOB_TITLE FORMAT A20 WORD_WRAPPED
 
-COLUMN experience_id FORMAT A2
-COLUMN no_staff_needed A2
-COLUMN a.activity_date
-BREAK ON experience_id;
-BREAK ON experience_id SKIP n
+Switch statement 
+Exception - use them for not null
+
+Bulk collects, bulk binds
+No_data_found, Others - add
