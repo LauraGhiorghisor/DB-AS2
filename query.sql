@@ -125,3 +125,4 @@ SELECT SUM(a.no_staff_needed)
 FROM experiences e, TABLE(e.activities) a
 WHERE experience_id = 4;
 -- 4
+
