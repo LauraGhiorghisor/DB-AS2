@@ -351,6 +351,8 @@ SHOW ERRORS;
 DROP PROCEDURE proc_description_location;
 DROP PROCEDURE proc_activities;
 DROP PROCEDURE proc_address_sponsors;
+DROP PROCEDURE proc_xp_name;
+DROP PROCEDURE proc_xp_annual_takings_total;
 DROP PROCEDURE proc_xp_takings_total;
 DROP PROCEDURE proc_xp_price_min;
 DROP PROCEDURE proc_test_duration;
