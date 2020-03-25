@@ -209,11 +209,11 @@ END proc_calc_annual_takings;
 /
 SHOW ERRORS;
 
--- proc_lowest_avg_price
-CREATE OR REPLACE PROCEDURE proc_lowest_avg_price IS
+-- proc_lowest_price
+CREATE OR REPLACE PROCEDURE proc_lowest_price IS
 BEGIN
-    DBMS_OUTPUT.PUT_LINE('The lowest average price for all experiences is GBP ' || func_xp_price_min || '.');
-END proc_lowest_avg_price;
+    DBMS_OUTPUT.PUT_LINE('The lowest ticket price is GBP ' || func_xp_price_min || '.');
+END proc_lowest_price;
 /
 SHOW ERRORS;
 
@@ -403,8 +403,8 @@ exec proc_calc_annual_takings(6, '2020'); -- Prints "An experience with an ID of
 exec proc_calc_annual_takings(1, '2020'); -- Prints "Between 1st January 2020 and 31st December 2020, the experience "LUXURY DINNER FOR 4" made GBP 1000 in sales."
 exec proc_calc_annual_takings(1, '2021'); -- Prints "No tickets were sold for experience "LUXURY DINNER FOR 4" in 2021."
 
--- proc_lowest_avg_price
-exec proc_lowest_avg_price -- Prints "The lowest average price for all experiences is GBP 45."
+-- proc_lowest_price
+exec proc_lowest_price; -- Prints "The lowest ticket price is GBP 45."
 
 -- proc_highest_grossing
 exec proc_highest_grossing; -- Prints "The highest grossing experience is "HELICOPTER RIDE" and has made GBP 4000."
