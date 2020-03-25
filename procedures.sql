@@ -40,16 +40,22 @@ SHOW ERRORS;
 -- proc_print_sponsor_address
 CREATE OR REPLACE PROCEDURE proc_print_sponsor_address (in_sponsor_id sponsors.sponsor_id%TYPE) IS
     CURSOR cur_address IS
-    SELECT sponsor_id, sponsor_firstname, sponsor_surname, address
+    SELECT sponsor_firstname, sponsor_surname, address
     FROM sponsors
     WHERE sponsor_id = in_sponsor_id;
 
-    rec_cur_address cur_address%ROWTYPE;
+    vc_sponsor_name VARCHAR2(61);
+
+   rec_cur_address cur_address%ROWTYPE;
 BEGIN
+    -- Fetch the sponsor name and store it in vc_experience_name.
+    vc_sponsor_name := func_sponsor_name(in_sponsor_id);
+
     OPEN cur_address;
     FETCH cur_address INTO rec_cur_address;
 
-    DBMS_OUTPUT.PUT_LINE(INITCAP(rec_cur_address.sponsor_firstname || ' ' || rec_cur_address.sponsor_surname));
+    -- Print the address in standard address format.
+    DBMS_OUTPUT.PUT_LINE(INITCAP(vc_sponsor_name));
     DBMS_OUTPUT.PUT_LINE(INITCAP(rec_cur_address.address.house_no || ' ' ||rec_cur_address.address.street));
     DBMS_OUTPUT.PUT_LINE(INITCAP(rec_cur_address.address.city));
     DBMS_OUTPUT.PUT_LINE(INITCAP(rec_cur_address.address.county));
@@ -286,7 +292,7 @@ BEGIN
     CLOSE cur_duration;
 
     -- Display the duration of the given experience.
-    DBMS_OUTPUT.PUT_LINE('The duration of experience "' || vc_experience_name || '" is ' || func_duration(dates(1), dates(2)) || ' days.');
+    DBMS_OUTPUT.PUT_LINE('The duration of experience "' || vc_experience_name || '" is ' || func_duration(dates(1), dates(2)) || ' day(s).');
 EXCEPTION
     WHEN NO_DATA_FOUND THEN
         DBMS_OUTPUT.PUT_LINE('An experience with an ID of ' || in_xp_id || ' does not exist.');
@@ -363,3 +369,93 @@ EXCEPTION
 END proc_start_end_date;
 /
 SHOW ERRORS;
+
+-- === TESTS FOR PROCEDURES ===
+-- proc_print_sponsor_address
+exec proc_print_sponsor_address; -- Prints "wrong number or type of arguments in call to 'PROC_PRINT_SPONSOR_ADDRESS'"
+exec proc_print_sponsor_address('a'); -- Prints "numeric or value error: character to number conversion error"
+exec proc_print_sponsor_address(6); -- Prints "An experience with an ID of 6 does not exist."
+exec proc_print_sponsor_address(1); -- Prints the address for sponsor "Andrew Adams".
+
+-- proc_xp_sponsors
+exec proc_xp_sponsors; -- Prints "wrong number or type of arguments in call to 'PROC_XP_SPONSORS'"
+exec proc_xp_sponsors('a'); -- Prints "numeric or value error: character to number conversion error"
+exec proc_xp_sponsors(6); -- Prints "An experience with an ID of 6 does not exist."
+exec proc_xp_sponsors(1); -- Prints a list of all the sponsors of the experience "LUXURY DINNER FOR 4".
+
+-- proc_find_sponsor_by_address
+exec proc_find_sponsor_by_address; -- Prints "wrong number or type of arguments in call to 'PROC_FIND_SPONSOR_BY_ADDRESS'"
+exec proc_find_sponsor_by_address(test); -- Prints "identifier 'TEST' must be declared".
+exec proc_find_sponsor_by_address('75'); -- Prints the address for sponsor "Ely Exeter".
+exec proc_find_sponsor_by_address('northamptonshire'); -- Prints the addresses for sponsors "Darren Dooley" and "Ely Exeter".
+
+-- proc_list_xp_activities
+exec proc_list_xp_activities; -- Prints "wrong number or type of arguments in call to 'PROC_LIST_XP_ACTIVITIES'"
+exec proc_list_xp_activities('a'); -- Prints "numeric or value error: character to number conversion error"
+exec proc_list_xp_activities(6); -- Prints "An experience with an ID of 6 does not exist."
+exec proc_list_xp_activities(1); -- Prints a list of all the activities in the experience "LUXURY DINNER FOR 4".
+
+-- proc_calc_annual_takings
+exec proc_calc_annual_takings; -- Prints "wrong number or type of arguments in call to 'PROC_CALC_ANNUAL_TAKINGS'"
+exec proc_calc_annual_takings(6); -- Prints "wrong number or type of arguments in call to 'PROC_CALC_ANNUAL_TAKINGS'"
+exec proc_calc_annual_takings('a', 'a'); -- Prints "numeric or value error: character to number conversion error"
+exec proc_calc_annual_takings(6, '2020'); -- Prints "An experience with an ID of 6 does not exist."
+exec proc_calc_annual_takings(1, '2020'); -- Prints "Between 1st January 2020 and 31st December 2020, the experience "LUXURY DINNER FOR 4" made GBP 1000 in sales."
+exec proc_calc_annual_takings(1, '2021'); -- Prints "No tickets were sold for experience "LUXURY DINNER FOR 4" in 2021."
+
+-- proc_lowest_avg_price
+exec proc_lowest_avg_price -- Prints "The lowest average price for all experiences is GBP 45."
+
+-- proc_highest_grossing
+exec proc_highest_grossing; -- Prints "The highest grossing experience is "HELICOPTER RIDE" and has made GBP 4000."
+
+DELETE FROM tickets; -- Delete all tickets.
+
+exec proc_highest_grossing; -- Prints "No tickets have been sold."
+
+-- Reinsert tickets.
+INSERT INTO tickets(ticket_number, experience_id, sponsor_id, price, date_sold)
+VALUES(seq_tickets.nextval, 1, 1, 1000.00, '23-MAR-2020');
+
+INSERT INTO tickets(ticket_number, experience_id, sponsor_id, price, date_sold)
+VALUES(seq_tickets.nextval, 2, 2, 550.00, '13-FEB-2020');
+
+INSERT INTO tickets(ticket_number, experience_id, sponsor_id, price, date_sold)
+VALUES(seq_tickets.nextval, 3, 3, 2000.00, '06-JAN-2020');
+
+INSERT INTO tickets(ticket_number, experience_id, sponsor_id, price, date_sold)
+VALUES(seq_tickets.nextval, 3, 3, 2000.00, '27-FEB-2020');
+
+INSERT INTO tickets(ticket_number, experience_id, sponsor_id, price, date_sold)
+VALUES(seq_tickets.nextval, 4, 4, 45.00, '14-FEB-2020');
+
+INSERT INTO tickets(ticket_number, experience_id, sponsor_id, price, date_sold)
+VALUES(seq_tickets.nextval, 5, 5, 80.00, '16-JAN-2020');
+
+-- proc_xp_duration
+exec proc_xp_duration; -- Prints "wrong number or type of arguments in call to 'PROC_XP_DURATION'".
+exec proc_xp_duration('a'); -- Prints "numeric or value error: character to number conversion error"
+exec proc_xp_duration(6); -- Prints "An experience with an ID of 6 does not exist."
+exec proc_xp_duration(1); -- Prints "The duration of experience "LUXURY DINNER FOR 4" is 1 day(s).
+
+-- proc_staff_total
+exec proc_staff_total; -- Prints "wrong number or type of arguments in call to 'PROC_STAFF_TOTAL'".
+exec proc_staff_total('a'); -- Prints "numeric or value error: character to number conversion error"
+exec proc_staff_total(6); -- Prints "An experience with an ID of 6 does not exist."
+exec proc_staff_total(1); -- Prints "The amount of staff require for experience "LUXURY DINNER FOR 4" is: 6" 
+
+-- proc_start_end_date
+exec proc_start_end_date; -- Prints "wrong number or type of arguments in call to 'PROC_START_END_DATE'".
+exec proc_start_end_date('a'); -- Prints "numeric or value error: character to number conversion error"
+exec proc_start_end_date(6); -- Prints "An experience with an ID of 6 does not exist."
+exec proc_start_end_date(1); -- Prints "The start and end dates for the experience "LUXURY DINNER FOR 4" have been updated successfully!"
+
+-- Insert new (incomplete) experience.
+INSERT INTO experiences (experience_id, experience_nature_id, experience_name, location_id)
+VALUES (6, 1, 'TEST EXPERIENCE', 1); 
+
+exec proc_start_end_date(6); -- Prints "The start and end dates for the experience "TEST EXPERIENCE" could not be updated due to a null value."
+
+-- Delete the experience.
+DELETE FROM experiences
+WHERE experience_id = 6;
