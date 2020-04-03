@@ -86,6 +86,9 @@ CHECK (price BETWEEN 0 AND 9999999.00);
 ALTER TABLE sponsors
 MODIFY registration_date DEFAULT SYSDATE;
 
+ALTER TABLE addresses
+MODIFY country DEFAULT 'UK';
+
 ALTER TABLE experience_nature
 ADD CONSTRAINT uq_xp_nature_name
 UNIQUE (experience_nature_name);

@@ -21,8 +21,9 @@ VALUES('26 ALWOOD BUILDING', 'BENJAMIN STREET', 'BATH', 'SOMERSET', 'BA3 7TY', '
 INSERT INTO addresses(house_no, street, city, county, postcode, country)
 VALUES('33', 'CECIL STREET', 'CAMBRIDGE', 'CAMBRIDGESHIRE', 'CB5 7YH', 'UK');
 
-INSERT INTO addresses(house_no, street, city, county, postcode, country)
-VALUES('48 DARBY HOUSE', 'DOLBY STREET', 'DERBY', 'DERBYSHIRE', 'DE1 2AW', 'UK');
+-- Default country
+INSERT INTO addresses(house_no, street, city, county, postcode)
+VALUES('48 DARBY HOUSE', 'DOLBY STREET', 'DERBY', 'DERBYSHIRE', 'DE1 2AW');
 
 -- No column specification
 INSERT INTO addresses

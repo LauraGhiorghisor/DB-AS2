@@ -12,9 +12,6 @@
 
 -- DROP FUNCTIONS (and testing procedures)
 
-
-
-
 -- DROP FUNCTIONS
 DROP FUNCTION func_staff_total;
 DROP FUNCTION func_duration;
@@ -28,6 +25,18 @@ DROP FUNCTION func_print_location_address;
 DROP FUNCTION func_get_no_activities;
 DROP FUNCTION func_make_upper;
 
+-- DROP Procedures used for testing
+DROP PROCEDURE proc_upper;
+DROP PROCEDURE proc_get_no_activities;
+DROP PROCEDURE proc_print_location_address;
+DROP PROCEDURE proc_test_season;
+DROP PROCEDURE proc_sponsor_name;
+DROP PROCEDURE proc_xp_name;
+DROP PROCEDURE proc_xp_annual_takings_total;
+DROP PROCEDURE proc_xp_takings_total;
+DROP PROCEDURE proc_xp_price_avg;
+DROP PROCEDURE proc_test_duration;
+DROP PROCEDURE proc_staff_total;
 
 -- Drop procedures
 DROP PROCEDURE proc_print_sponsor_address;
@@ -43,21 +52,8 @@ DROP PROCEDURE proc_start_end_date;
 DROP PROCEDURE proc_print_experience_details;
 DROP PROCEDURE proc_xp_season;
 
--- DROP Procedures used for testing
-DROP PROCEDURE proc_upper;
-DROP PROCEDURE proc_get_no_activities;
-DROP PROCEDURE proc_print_location_address;
-DROP PROCEDURE proc_test_season;
-DROP PROCEDURE proc_sponsor_name;
-DROP PROCEDURE proc_xp_name;
-DROP PROCEDURE proc_xp_annual_takings_total;
-DROP PROCEDURE proc_xp_takings_total;
-DROP PROCEDURE proc_xp_price_avg;
-DROP PROCEDURE proc_test_duration;
-DROP PROCEDURE proc_staff_total;
 
 -- DROP TRIGGERS
-
 DROP TRIGGER trig_loc_insert_success;
 DROP TRIGGER trig_xp_predicates;
 DROP TRIGGER trig_pk_sponsor_no_update;
@@ -77,6 +73,7 @@ DROP SEQUENCE seq_experiences;
 DROP SEQUENCE seq_experience_nature;
 DROP SEQUENCE seq_locations;
 DROP SEQUENCE seq_sponsors;
+DROP SEQUENCE seq_userlog;
 
 -- DROP FOREIGN KEYS
 ALTER TABLE tickets
@@ -152,3 +149,7 @@ DROP TYPE address_type;
 -- COMMIT CHANGES
 PURGE RECYCLEBIN;
 COMMIT;
+
+-- Testing
+SELECT * FROM user_objects; 
+-- no rows selected

@@ -20,6 +20,9 @@ ALTER SESSION SET nls_date_format='dd-MON-yyyy';
 
 
 -----------------------------------------------------------
+
+
+-- trig_loc_insert_success -- prints success message upon insert
 CREATE OR REPLACE TRIGGER trig_loc_insert_success
 AFTER INSERT 
 ON locations
@@ -43,6 +46,8 @@ WHERE a.street = 'ELMWOOD STREET';
 -----------------------------------------------------------
 
 
+
+-- trig_xp_predicates - prints message on INSERT and does not allow PK update
 -- Using predicates
 CREATE OR REPLACE TRIGGER trig_xp_predicates
 BEFORE INSERT OR UPDATE OF experience_id
@@ -83,6 +88,7 @@ activity_table_type(
 -----------------------------------------------------------
 
 
+-- trig_pk_sponsor_no_update - does not permit PK updates
 CREATE OR REPLACE TRIGGER trig_pk_sponsor_no_update
 BEFORE UPDATE
 OF sponsor_id 
@@ -107,6 +113,7 @@ WHERE sponsor_id = 345;
 -----------------------------------------------------------
 
 
+-- trig_upper_firstname - automates uppercase on firstname
 CREATE OR REPLACE TRIGGER trig_upper_firstname
 BEFORE INSERT
 ON sponsors
@@ -135,6 +142,7 @@ SELECT sponsor_id, sponsor_firstname FROM sponsors WHERE sponsor_surname = 'MCCA
 -----------------------------------------------------------
 
 
+-- trig_sponsors_reg_date - automates registration date entries
 CREATE OR REPLACE TRIGGER trig_sponsors_reg_date
 BEFORE INSERT
 ON sponsors
@@ -150,6 +158,11 @@ END trig_sponsors_reg_date;
 /
 SHOW ERRORS
 -- Testing
+-- In order to successfully test, the DEFAULT constraint should be suspended.
+
+ALTER TABLE sponsors
+MODIFY registration_date DEFAULT NULL;
+
 INSERT INTO sponsors(sponsor_id, sponsor_firstname, sponsor_surname)
 VALUES (seq_sponsors.nextval, 'TEST', 'TEST');
 
@@ -158,6 +171,7 @@ SELECT registration_date FROM sponsors WHERE sponsor_firstname = 'TEST';
 -----------------------------------------------------------
 
 
+-- trig_security - only allows schema updates during working days and between working hours
 -- https://docs.oracle.com/cd/E11882_01/appdev.112/e25519/triggers.htm#LNPLS752
 CREATE OR REPLACE TRIGGER trig_security
 BEFORE INSERT OR UPDATE OR DELETE 
@@ -199,6 +213,7 @@ ALTER TRIGGER trig_security ENABLE;
 -----------------------------------------------------------
 
 
+-- trig_delete_sponsor -- prints message on delete
 CREATE OR REPLACE TRIGGER trig_delete_sponsor
 BEFORE DELETE 
 ON sponsors
@@ -233,6 +248,7 @@ SELECT sponsor_id FROM sponsors;
 
 
 
+-- trig_schema_delete - prints message on user drops
 -- To find the schema
 SELECT username AS schema_name
 FROM sys.all_users
@@ -258,6 +274,7 @@ DROP TABLE test_trig_drops;
 -----------------------------------------------------------
 
 
+-- trig_db_hello - prints messages to user upon login, database level
 CREATE OR REPLACE TRIGGER trig_db_hello
 AFTER LOGON 
 ON DATABASE
@@ -273,6 +290,7 @@ SELECT * FROM global_name; -- STUDENT.NENE.AC.UK
 -----------------------------------------------------------
 
 
+-- trig_user_log - records user log in date
 CREATE OR REPLACE TRIGGER trig_user_log
 AFTER LOGON
 ON CSY2038_152.SCHEMA 
