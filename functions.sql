@@ -8,6 +8,8 @@
 -- @/Users/Laura/csy2038/DB-AS2/functions.sql
 -- @C:\Users\Daiana\Desktop\functions.txt
 
+
+
 SET SERVEROUTPUT ON
 
 -- func_staff_total
@@ -34,7 +36,7 @@ CREATE OR REPLACE PROCEDURE proc_staff_total IS
 
 BEGIN 
 
-	DBMS_OUTPUT.PUT_LINE ('The total number of staff required for experience of id 1 is ' || func_staff_total(1));
+	DBMS_OUTPUT.PUT_LINE ('The total number of staff required for experience of ID 1 is ' || func_staff_total(1));
 
 END proc_staff_total;
 /
@@ -43,16 +45,11 @@ EXECUTE proc_staff_total
 
 
 
+
 -- func_duration
 CREATE OR REPLACE FUNCTION func_duration (in_start_date DATE, in_end_date DATE) RETURN NUMBER IS
-	-- vn_months NUMBER(5);
 	vn_days NUMBER(4);
 BEGIN
-	/*
-	vn_months := MONTHS_BETWEEN(in_start_date, in_end_date);
-	DBMS_OUTPUT.PUT_LINE(vn_months);
-	RETURN FLOOR(vn_months/24);
-	*/
 	vn_days := in_end_date - in_start_date;
 	RETURN vn_days;
 END func_duration;
@@ -64,7 +61,7 @@ CREATE OR REPLACE PROCEDURE proc_test_duration IS
 
 BEGIN 
 
-	DBMS_OUTPUT.PUT_LINE ('Duration is ' || func_duration('01-JAN-1991', '02-JAN-1991'));
+	DBMS_OUTPUT.PUT_LINE ('Duration is ' || func_duration('01-JAN-1991', '30-JAN-1991'));
 
 END proc_test_duration;
 /
@@ -73,53 +70,44 @@ EXECUTE proc_test_duration
 
 
 
-
-
---Minimum price for an experience
-CREATE OR REPLACE FUNCTION func_xp_price_min
+-- func_xp_price_avg
+CREATE OR REPLACE FUNCTION func_xp_price_avg (in_xp_id IN experiences.experience_id%TYPE)
 RETURN NUMBER IS 
-      vn_price_min NUMBER(9,2);
+
+      vn_price_avg NUMBER(9,2);
 	
 	  BEGIN
-	       SELECT MIN(price)
-		   INTO vn_price_min
-		   FROM tickets;
+	       SELECT AVG(price)
+		   INTO vn_price_avg
+		   FROM tickets
+		   WHERE experience_id = in_xp_id;
 
-		   RETURN vn_price_min;
+		   RETURN vn_price_avg;
 
-	  END func_xp_price_min;
-/
-		   
+	  END func_xp_price_avg;
+/	   
 SHOW ERRORS;
 
---Procedure to test function func_xp_price_min
-CREATE OR REPLACE PROCEDURE proc_xp_price_min IS
+--Procedure to test function func_xp_price_avg
+CREATE OR REPLACE PROCEDURE proc_xp_price_avg (in_xp_id IN experiences.experience_id%TYPE) IS
 
-    vn_min_price NUMBER(9,2);
+    vn_avg_price NUMBER(9,2);
 	vv_xp_name experiences.experience_name%TYPE;
 
 BEGIN
-    vn_min_price := func_xp_price_min;
+    vn_avg_price := func_xp_price_avg(in_xp_id);
 
-SELECT experience_name 
-INTO vv_xp_name
-FROM experiences 
-WHERE experience_id IN (
-	SELECT  experience_id
-	FROM tickets
-	WHERE price = vn_min_price);
-
-	DBMS_OUTPUT.PUT_LINE ('Minimum price is ' || vn_min_price || ' for the experience ' || vv_xp_name);
-END proc_xp_price_min;
+	DBMS_OUTPUT.PUT_LINE ('Average ticket price for ' || func_xp_name(in_xp_id) || ' is ' || vn_avg_price);
+END proc_xp_price_avg;
 /
-EXECUTE proc_xp_price_min
+EXECUTE proc_xp_price_avg(1);
 
 SHOW ERRORS;
 
 
 
--- Total of tickets takings per experience
 
+-- func_takings_total - Total of tickets takings per experience
 CREATE OR REPLACE FUNCTION func_takings_total (in_xp_id IN experiences.experience_id%TYPE) RETURN NUMBER IS
 	vn_takings_total NUMBER(20);	  
 BEGIN
@@ -146,10 +134,8 @@ EXECUTE proc_xp_takings_total
 
 
 
-
-
--- Annual takings per experience
-CREATE OR REPLACE FUNCTION func_annual_takings_total (in_xp_id experiences.experience_id%TYPE, in_year VARCHAR2) RETURN NUMBER IS
+-- func_annual_takings_total - Annual takings per experience
+CREATE OR REPLACE FUNCTION func_annual_takings_total (in_xp_id IN experiences.experience_id%TYPE, in_year VARCHAR2) RETURN NUMBER IS
 	vn_takings_total NUMBER(20);	  
 BEGIN
 	SELECT SUM(price)
@@ -164,7 +150,7 @@ SHOW ERRORS;
 
 CREATE OR REPLACE PROCEDURE proc_xp_annual_takings_total IS
 BEGIN
-	DBMS_OUTPUT.PUT_LINE ('The annual takings are  ' || func_annual_takings_total(1) || ' for the given experience.');
+	DBMS_OUTPUT.PUT_LINE ('The annual takings are  ' || func_annual_takings_total(1, '2020') || ' for the given experience.');
 END proc_xp_annual_takings_total;
 /
 SHOW ERRORS;
@@ -176,7 +162,7 @@ EXECUTE proc_xp_annual_takings_total
 
 
 
--- Get season based on date
+-- func_season - Get season based on date
 CREATE OR REPLACE FUNCTION func_season(in_date DATE)
 RETURN VARCHAR2 IS
       vv_season experiences.season%TYPE;
@@ -197,8 +183,22 @@ END func_season;
 /
 SHOW ERRORS;
 
--- Retrieve experience name based on experience id.
-CREATE OR REPLACE FUNCTION func_xp_name (in_xp_id experiences.experience_id%TYPE) RETURN VARCHAR2 IS
+-- procedure to test func_season
+CREATE OR REPLACE PROCEDURE proc_test_season(in_date DATE) IS
+BEGIN
+	DBMS_OUTPUT.PUT_LINE('The season for ' || in_date || ' is ' || func_season(in_date));
+END proc_test_season;
+/
+SHOW ERRORS;
+
+EXECUTE proc_test_season('22-MAR-2020');
+
+
+
+
+
+-- func_xp_name - Retrieve experience name based on experience id.
+CREATE OR REPLACE FUNCTION func_xp_name (in_xp_id IN experiences.experience_id%TYPE) RETURN VARCHAR2 IS
 	vc_experience_name experiences.experience_name%TYPE;
 BEGIN
     SELECT experience_name
@@ -211,7 +211,7 @@ END func_xp_name;
 /
 SHOW ERRORS;
 
-CREATE OR REPLACE PROCEDURE proc_xp_name (in_xp_id experiences.experience_id%TYPE) IS
+CREATE OR REPLACE PROCEDURE proc_xp_name (in_xp_id IN experiences.experience_id%TYPE) IS
 BEGIN
 	DBMS_OUTPUT.PUT_LINE('The experience name is "' || func_xp_name(in_xp_id) || '".');
 END proc_xp_name;
@@ -221,7 +221,8 @@ SHOW ERRORS;
 EXECUTE proc_xp_name(1);
 
 
--- Retrieve sponsor name based on sponsor id.
+
+-- func_sponsor_name - Retrieve sponsor name based on sponsor id.
 CREATE OR REPLACE FUNCTION func_sponsor_name (in_sponsor_id sponsors.sponsor_id%TYPE) RETURN VARCHAR2 IS
 	vc_sponsor_firstname sponsors.sponsor_firstname%TYPE;
 	vc_sponsor_surname sponsors.sponsor_surname%TYPE;
@@ -251,61 +252,68 @@ SHOW ERRORS;
 
 EXECUTE proc_sponsor_name(1);
 
--- must use CURSORS here
-
-
--- CREATE OR REPLACE PROCEDURE proc_get_season(in_xp_id IN experiences.experience_id%TYPE) IS
-
---     vc_date DATE;
-
--- 	  BEGIN
-
--- 	  date_varray DATE := DATE('01-MAR-2020', '01-APR-2021');
--- 		-- SELECT d.*
--- 		-- FROM experiences e, TABLE (e.activities) a, TABLE(a.activity_date) d)
--- 		-- WHERE experience_id = in_xp_id);
-
--- 	vc_date := date_varray(1);
-
--- 	DBMS_OUTPUT.PUT_LINE ('The season for the given experience is ' || func_season(vc_date));
-	
--- 	END proc_get_season;
--- /
--- EXEC proc_get_season(1);
-
--- SHOW ERRORS;	  
 
 
 
 
 
-
---Display country for a selected city
-
-CREATE OR REPLACE FUNCTION func_address_sponsors(in_address VARCHAR2) 
+-- func_print_location_address - Prints location address in postal format
+CREATE OR REPLACE FUNCTION func_print_location_address (in_location_id IN locations.location_id%TYPE) 
 RETURN VARCHAR2 IS
-      vc_location VARCHAR2(20);
+ 	vn_number VARCHAR2(30);
+  	vc_street VARCHAR2(30);
+   	vc_city VARCHAR2(30);
+	vc_county VARCHAR2(30);
+    vc_country VARCHAR2(30);
+	vc_postcode VARCHAR2(10);
+	vc_location VARCHAR2(500);
 	  BEGIN
-           SELECT s.address.country
-	       INTO vc_location
-	       FROM sponsors s
-	       WHERE s.address.city = in_address;
+           SELECT l.address.house_no
+	       INTO vn_number
+	       FROM locations l
+	       WHERE location_id = in_location_id;
+
+		   SELECT l.address.street
+	       INTO vc_street
+	       FROM locations l
+	       WHERE location_id = in_location_id;
+
+		   SELECT l.address.city
+	       INTO vc_city
+	       FROM locations l
+	       WHERE location_id = in_location_id;
+
+		   SELECT l.address.county
+	       INTO vc_county
+	       FROM locations l
+	       WHERE location_id = in_location_id;
+
+		   SELECT l.address.country
+	       INTO vc_country
+	       FROM locations l
+	       WHERE location_id = in_location_id;
+
+		   SELECT l.address.postcode
+	       INTO vc_postcode
+	       FROM locations l
+	       WHERE location_id = in_location_id;
+
+			vc_location := CHR(10) || vn_number || ' ' || vc_street || CHR(10) || vc_city || CHR(10) || vc_county || CHR(10) || vc_country || CHR(10) || vc_postcode;
 	       RETURN vc_location;
-	  END func_address_sponsors;
+	  END func_print_location_address;
 /
 SHOW ERRORS;
 
-
---Procedure to test function func_xp_price_min
-CREATE OR REPLACE PROCEDURE proc_address_sponsors(in_address VARCHAR2) IS
-vc_location VARCHAR2(20);
+--Procedure to test function func_print_location_address
+CREATE OR REPLACE PROCEDURE proc_print_location_address (in_location_id IN locations.location_id%TYPE) IS
+vc_location VARCHAR2(500);
 	
 BEGIN
-    vc_location := func_address_sponsors(in_address);
+    vc_location := func_print_location_address(in_location_id);
 	DBMS_OUTPUT.PUT_LINE (vc_location);
-END proc_get_address;
+END proc_print_location_address;
 /
-EXEC proc_address_sponsors('KETTERING')
+EXEC proc_print_location_address(2)
 
 SHOW ERRORS; 
 
@@ -314,34 +322,36 @@ SHOW ERRORS;
 
 
 
- 
 --Return number of activities in an experience
-CREATE OR REPLACE FUNCTION func_get_activities(in_experience_name IN experiences.experience_name%TYPE)
+CREATE OR REPLACE FUNCTION func_get_no_activities(in_experience_id IN experiences.experience_id%TYPE)
 RETURN NUMBER IS
-      vn_activities NUMBER(2);
+      vn_no_activities NUMBER(2);
       BEGIN
 	     SELECT COUNT(a.activity_name)
-	     INTO vn_activities
+	     INTO vn_no_activities
 	     FROM experiences e,
 	     TABLE (e.activities) a
-	     WHERE e.experience_name = in_experience_name;
-	     RETURN vn_activities;
+	     WHERE e.experience_id = in_experience_id;
+
+	     RETURN vn_no_activities;
 	  END;
 /
 
 SHOW ERRORS;
  
---Procedure to test function func_get_activities 
-CREATE OR REPLACE PROCEDURE proc_activities(in_experience_name IN experiences.experience_name%TYPE) IS
-vn_activities NUMBER(2);
-	
+--Procedure to test function func_get_no_activities 
+CREATE OR REPLACE PROCEDURE proc_get_no_activities(in_experience_id IN experiences.experience_id%TYPE) IS
+vn_activities_no NUMBER(2);
+vv_xp_name VARCHAR2(50);
 BEGIN
-    vn_activities := func_get_activities(in_experience_name);
-	DBMS_OUTPUT.PUT_LINE ('There are ' || vn_activities || ' activities in the experience ' || in_experience_name);
+    vn_activities_no := func_get_no_activities(in_experience_id);
+	vv_xp_name := func_xp_name(in_experience_id);
 
-END proc_activities;
+	DBMS_OUTPUT.PUT_LINE ('There are ' || vn_activities_no || ' activities in the experience ' || vv_xp_name);
+
+END proc_get_no_activities;
 /
-EXEC proc_activities('COMEDY NIGHT')
+EXEC proc_get_no_activities(1);
 
 SHOW ERRORS; 
 
@@ -350,42 +360,33 @@ SHOW ERRORS;
 
 
 
---Display description for a location
-CREATE OR REPLACE FUNCTION func_description_location(in_address VARCHAR2) 
+-- Make string uppercase
+CREATE OR REPLACE FUNCTION func_make_upper(in_string VARCHAR2) 
 RETURN VARCHAR2 IS
-      vc_description VARCHAR2(200);
+
 	  BEGIN
-           SELECT l.description
-	       INTO vc_description
-	       FROM locations l
-	       WHERE l.address.city = in_address;
-	       RETURN vc_description;
-	  END func_description_location;
+	       RETURN UPPER(in_string);
+	  END func_make_upper;
 /
 SHOW ERRORS;
 
-
---Procedure to test function func_description_location
-CREATE OR REPLACE PROCEDURE proc_description_location(in_address VARCHAR2) IS
-vc_description VARCHAR2(200);
+-- Procedure to test func_make_upper: proc_upper
+CREATE OR REPLACE PROCEDURE proc_upper(in_string VARCHAR2) IS
 	
 BEGIN
-    vc_description := func_description_location(in_address);
-	DBMS_OUTPUT.PUT_LINE (vc_description);
-END proc_description_location;
+	DBMS_OUTPUT.PUT_LINE (func_make_upper(in_string));
+END proc_upper;
 /
-EXEC proc_description_location('BATH')
+EXEC proc_upper('anna');
 
 SHOW ERRORS;
 
--- Drop procedures
-DROP PROCEDURE proc_description_location;
-DROP PROCEDURE proc_activities;
-DROP PROCEDURE proc_address_sponsors;
-DROP PROCEDURE proc_sponsor_name;
-DROP PROCEDURE proc_xp_name;
-DROP PROCEDURE proc_xp_annual_takings_total;
-DROP PROCEDURE proc_xp_takings_total;
-DROP PROCEDURE proc_xp_price_min;
-DROP PROCEDURE proc_test_duration;
-DROP PROCEDURE proc_staff_total;
+
+
+
+-- Testing
+-- 11 Functions in total
+ SELECT object_name FROM user_procedures WHERE object_name LIKE 'FUNC_%';
+
+-- COMMIT CHANGES
+COMMIT;

@@ -24,6 +24,18 @@
 @C:\DB-AS2\query.sql
 @/Users/Laura/csy2038/DB-AS2/query.sql
 
--- join
-@C:\DB-AS2\join.sql
-@/Users/Laura/csy2038/DB-AS2/join.sql
+-- functions
+@C:\DB-AS2\functions.sql
+@/Users/Laura/csy2038/DB-AS2/functions.sql
+
+-- procedures
+@C:\DB-AS2\procedures.sql
+@/Users/Laura/csy2038/DB-AS2/procedures.sql
+
+-- triggers
+@C:\DB-AS2\triggers.sql
+@/Users/Laura/csy2038/DB-AS2/triggers.sql
+
+-- script
+@C:\DB-AS2\script.sql
+@/Users/Laura/csy2038/DB-AS2/script.sql

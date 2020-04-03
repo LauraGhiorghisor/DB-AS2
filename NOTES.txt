@@ -1,9 +1,0 @@
--- must ADD COLUMN FORMATTING 
-
-
-
-Switch statement 
-Exception - use them for not null
-
-Bulk collects, bulk binds
-No_data_found, Others - add

@@ -41,10 +41,10 @@ SHOW ERRORS;
 CREATE OR REPLACE TYPE address_type AS OBJECT (
     house_no VARCHAR2(30),
     street VARCHAR2(30),
-    city VARCHAR2(25),
+    city VARCHAR2(30),
     county VARCHAR2(30),
-    postcode VARCHAR2(8),
-    country VARCHAR2(20));
+    postcode VARCHAR2(10),
+    country VARCHAR2(30));
 /
 SHOW ERRORS;
 
@@ -88,6 +88,13 @@ CREATE TABLE tickets (
     price NUMBER(9,2),
     date_sold DATE);
 
+
+
+CREATE TABLE userlog (
+    entry_id NUMBER (10),
+    reg_date DATE);
+
+
 -- CREATE SEQUENCES
 -- seq_sponsors
 CREATE SEQUENCE seq_sponsors
@@ -113,6 +120,12 @@ START WITH 1;
 CREATE SEQUENCE seq_tickets
 INCREMENT BY 1
 START WITH 1;
+
+-- seq_userlog
+CREATE SEQUENCE seq_userlog
+INCREMENT BY 1
+START WITH 1;
+
 
 -- COMMIT CHANGES
 COMMIT;

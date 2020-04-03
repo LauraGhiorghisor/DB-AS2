@@ -33,6 +33,12 @@ ALTER TABLE tickets
 ADD CONSTRAINT pk_tickets
 PRIMARY KEY (ticket_number, sponsor_id, experience_id);
 
+--pk_userlog
+ALTER TABLE userlog
+ADD CONSTRAINT pk_userlog
+PRIMARY KEY (entry_id);
+
+
 -- FOREIGN KEYS
 -- fk_e_experience_nature
 ALTER TABLE experiences
@@ -60,9 +66,6 @@ REFERENCES sponsors(sponsor_id);
 
 -- CHECK, UNIQUE and DEFAULT CONSTRAINTS
 -- sponsors
-ALTER TABLE sponsors
-ADD CONSTRAINT ck_sponsor_firstname
-CHECK (sponsor_firstname = UPPER(sponsor_firstname));
 
 ALTER TABLE sponsors
 ADD CONSTRAINT ck_sponsor_surname

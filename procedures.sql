@@ -9,35 +9,8 @@
 
 SET SERVEROUTPUT ON;
 
--- proc_print_location_address
-/*
-CREATE OR REPLACE PROCEDURE proc_print_location_address (in_location_id locations.location_id%TYPE) IS
-    CURSOR cur_address IS
-    SELECT location_id, address
-    FROM locations
-    WHERE location_id = in_location_id;
 
-    rec_cur_address cur_address%ROWTYPE;
-BEGIN
-    OPEN cur_address;
-    FETCH cur_address INTO rec_cur_address;
-
-    DBMS_OUTPUT.PUT_LINE(INITCAP(rec_cur_address.address.house_no || ' ' ||rec_cur_address.address.street));
-    DBMS_OUTPUT.PUT_LINE(INITCAP(rec_cur_address.address.city));
-    DBMS_OUTPUT.PUT_LINE(INITCAP(rec_cur_address.address.county));
-    DBMS_OUTPUT.PUT_LINE(rec_cur_address.address.postcode);
-    DBMS_OUTPUT.PUT_LINE(rec_cur_address.address.country || chr(10));
-
-    CLOSE cur_address;
-EXCEPTION
-    WHEN NO_DATA_FOUND THEN
-        DBMS_OUTPUT.PUT_LINE('A location with an ID of ' || in_location_id || ' does not exist.');
-END;
-/
-SHOW ERRORS;
-*/
-
--- proc_print_sponsor_address
+-- proc_print_sponsor_address - prints address in post format
 CREATE OR REPLACE PROCEDURE proc_print_sponsor_address (in_sponsor_id sponsors.sponsor_id%TYPE) IS
     CURSOR cur_address IS
     SELECT sponsor_firstname, sponsor_surname, address
@@ -48,7 +21,7 @@ CREATE OR REPLACE PROCEDURE proc_print_sponsor_address (in_sponsor_id sponsors.s
 
    rec_cur_address cur_address%ROWTYPE;
 BEGIN
-    -- Fetch the sponsor name and store it in vc_experience_name.
+    -- Fetch the sponsor name and store it in vc_sponsor_name.
     vc_sponsor_name := func_sponsor_name(in_sponsor_id);
 
     OPEN cur_address;
@@ -70,7 +43,13 @@ END proc_print_sponsor_address;
 /
 SHOW ERRORS;
 
--- proc_xp_sponsors
+
+-- Run
+EXECUTE proc_print_sponsor_address(1);
+
+
+
+-- proc_xp_sponsors - prints all sponsors for a given experience
 CREATE OR REPLACE PROCEDURE proc_xp_sponsors (in_xp_id experiences.experience_id%TYPE) IS
     CURSOR cur_sponsors IS
     SELECT e.experience_id, s.sponsor_id, s.sponsor_surname, s.sponsor_firstname
@@ -82,14 +61,15 @@ CREATE OR REPLACE PROCEDURE proc_xp_sponsors (in_xp_id experiences.experience_id
     WHERE e.experience_id = in_xp_id;
 
     vc_experience_name experiences.experience_name%TYPE;
+    vc_sponsor_name VARCHAR2(60);
 BEGIN
     -- Fetch the experience_name and store it in vc_experience_name.
     vc_experience_name := func_xp_name(in_xp_id);
 
     -- List all sponsors for the given experience.
     DBMS_OUTPUT.PUT_LINE('=== SPONSORS FOR EXPERIENCE: "' || vc_experience_name || '" ===');
-    FOR rec_cur_sponsors IN cur_sponsors LOOP
-        DBMS_OUTPUT.PUT_LINE('ID: ' || rec_cur_sponsors.sponsor_id || ' | NAME: ' || rec_cur_sponsors.sponsor_surname || ', ' || rec_cur_sponsors.sponsor_firstname);
+    FOR rec_cur_sponsors IN cur_sponsors LOOP   
+        DBMS_OUTPUT.PUT_LINE('ID: ' || rec_cur_sponsors.sponsor_id || ' | NAME: ' ||  rec_cur_sponsors.sponsor_surname || ', ' || rec_cur_sponsors.sponsor_firstname);
     END LOOP;
 EXCEPTION
     WHEN NO_DATA_FOUND THEN
@@ -97,8 +77,14 @@ EXCEPTION
 END proc_xp_sponsors;
 /
 SHOW ERRORS;
+-- Run
+EXECUTE proc_xp_sponsors(2);
 
--- proc_find_sponsor_by_address
+
+
+
+
+-- proc_find_sponsor_by_address - returns all sponsors whose address includes the given string
 CREATE OR REPLACE PROCEDURE proc_find_sponsor_by_address (in_search_string VARCHAR2) IS
     CURSOR cur_sponsor_addresses IS
     SELECT sponsor_id, address
@@ -118,8 +104,10 @@ BEGIN
         vc_current_address := rec_cur_sponsor_addresses.address.house_no || ' ' || rec_cur_sponsor_addresses.address.street || ', ' || rec_cur_sponsor_addresses.address.city || ', ' || rec_cur_sponsor_addresses.address.county || ', ' || rec_cur_sponsor_addresses.address.postcode || ', ' || rec_cur_sponsor_addresses.address.country;
 
         -- Check if the string in vc_current_address contains the search string as a substring.
-        IF INSTR(vc_current_address, UPPER(in_search_string)) > 0 THEN
-            proc_print_sponsor_address(rec_cur_sponsor_addresses.sponsor_id);
+        IF INSTR(LOWER(vc_current_address), LOWER(TRIM(in_search_string))) > 0 THEN
+
+             DBMS_OUTPUT.PUT_LINE('Sponsor ID ' || rec_cur_sponsor_addresses.sponsor_id );
+             proc_print_sponsor_address(rec_cur_sponsor_addresses.sponsor_id);
         END IF;
 
         FETCH cur_sponsor_addresses INTO rec_cur_sponsor_addresses;
@@ -130,7 +118,16 @@ END proc_find_sponsor_by_address;
 /
 SHOW ERRORS;
 
--- proc_list_xp_activities
+-- Run
+EXECUTE proc_find_sponsor_by_address('COPPER');
+
+
+
+
+
+
+
+-- proc_list_xp_activities - list all activities in a given experience
 CREATE OR REPLACE PROCEDURE proc_list_xp_activities (in_xp_id experiences.experience_id%TYPE) IS
     CURSOR cur_experiences IS
     SELECT e.experience_name, a.activity_name, a.no_staff_needed
@@ -147,11 +144,13 @@ CREATE OR REPLACE PROCEDURE proc_list_xp_activities (in_xp_id experiences.experi
 
     vc_experience_name experiences.experience_name%TYPE;
     vc_output_string VARCHAR2(200);
-
+    vn_total NUMBER(3);
     rec_cur_activities cur_activities%ROWTYPE;
 BEGIN
     -- Fetch the experience_name and store it in vc_experience_name.
     vc_experience_name := func_xp_name(in_xp_id);
+    -- Fetch the number of activities for output.
+    vn_total := func_get_no_activities(in_xp_id);
 
     -- Initialise array and set size to 2.
     dates := datearray();
@@ -160,7 +159,7 @@ BEGIN
     OPEN cur_activities;
 
     -- Display all activities belonging to the specified experience.
-    DBMS_OUTPUT.PUT_LINE('=== Activities in experience "' || vc_experience_name || '" ===');
+    DBMS_OUTPUT.PUT_LINE('=== There are ' || vn_total || ' activities in experience "' || vc_experience_name || '" ===');
     FOR rec_cur_experiences IN cur_experiences LOOP
         vc_output_string := CONCAT('Activity Name: ' || rec_cur_experiences.activity_name || ' | ', 'No. of Staff: ' || rec_cur_experiences.no_staff_needed);
         
@@ -179,8 +178,14 @@ EXCEPTION
 END proc_list_xp_activities;
 /
 SHOW ERRORS;
+--Run
+EXECUTE proc_list_xp_activities(1);
 
--- proc_calc_annual_takings
+
+
+
+
+-- proc_calc_annual_takings - calculates takings per year, for a given experience
 CREATE OR REPLACE PROCEDURE proc_calc_annual_takings (in_xp_id experiences.experience_id%TYPE, in_year VARCHAR2) IS
     vc_experience_name experiences.experience_name%TYPE;
     vd_date_sold DATE;
@@ -208,16 +213,62 @@ EXCEPTION
 END proc_calc_annual_takings;
 /
 SHOW ERRORS;
+-- Run
+EXECUTE proc_calc_annual_takings(1, '2020');
 
--- proc_lowest_price
-CREATE OR REPLACE PROCEDURE proc_lowest_price IS
+
+
+
+
+
+-- proc_lowest_price - calculates lowest average ticket price out of all experiences
+CREATE OR REPLACE PROCEDURE proc_lowest_avg_price IS
+    CURSOR cur_experiences IS
+    SELECT e.experience_id, e.experience_name, t.price
+    FROM experiences e
+    JOIN tickets t
+    ON e.experience_id = t.experience_id;
+
+    no_tickets EXCEPTION;
+
+    vn_experience_id experiences.experience_id%TYPE;
+    vc_experience_name experiences.experience_name%TYPE;
+    vn_avg NUMBER(20);
+    vn_lowest_avg NUMBER(20);
 BEGIN
-    DBMS_OUTPUT.PUT_LINE('The lowest ticket price is GBP ' || func_xp_price_min || '.');
-END proc_lowest_price;
+    vn_avg := 0;
+    vn_lowest_avg := 10000000;
+
+    -- Loop through the tickets table and store the highest grossing total in vn_highest_total.
+    FOR rec_cur_experiences IN cur_experiences LOOP
+        vn_avg := func_xp_price_avg(rec_cur_experiences.experience_id);
+        IF vn_avg < vn_lowest_avg THEN
+            vn_experience_id := rec_cur_experiences.experience_id;
+            vc_experience_name := rec_cur_experiences.experience_name;
+            vn_lowest_avg := vn_avg;
+        END IF;
+    END LOOP;
+
+    -- Display the highest grossing experience.
+    IF vc_experience_name IS NOT NULL AND vn_lowest_avg != 10000000 THEN
+        DBMS_OUTPUT.PUT_LINE('The lowest ticket price average was recorded for "' || vc_experience_name || '" and has made GBP ' || vn_lowest_avg || '.');
+    ELSE
+        RAISE no_tickets;
+    END IF;
+EXCEPTION
+    WHEN no_tickets THEN
+        DBMS_OUTPUT.PUT_LINE('No tickets have been sold.');
+END proc_lowest_avg_price;
 /
 SHOW ERRORS;
+-- Run
+EXECUTE proc_lowest_avg_price;
 
--- proc_highest_grossing
+
+
+
+
+-- proc_highest_grossing - calculates highest grossing experience overall
 CREATE OR REPLACE PROCEDURE proc_highest_grossing IS
     CURSOR cur_experiences IS
     SELECT e.experience_id, e.experience_name, t.price
@@ -257,8 +308,13 @@ EXCEPTION
 END proc_highest_grossing;
 /
 SHOW ERRORS;
+-- Run
+EXECUTE proc_highest_grossing;
 
--- proc_xp_duration
+
+
+
+-- proc_xp_duration - calculates the duration of an experience, in days
 CREATE OR REPLACE PROCEDURE proc_xp_duration (in_xp_id experiences.experience_id%TYPE) IS
     CURSOR cur_duration IS
     SELECT d.*
@@ -292,15 +348,25 @@ BEGIN
     CLOSE cur_duration;
 
     -- Display the duration of the given experience.
-    DBMS_OUTPUT.PUT_LINE('The duration of experience "' || vc_experience_name || '" is ' || func_duration(dates(1), dates(2)) || ' day(s).');
+    IF func_duration(dates(1), dates(2)) = 0 THEN 
+        DBMS_OUTPUT.PUT_LINE('The duration of experience "' || vc_experience_name || '" is 1 day.');
+    ELSE 
+        DBMS_OUTPUT.PUT_LINE('The duration of experience "' || vc_experience_name || '" is ' || func_duration(dates(1), dates(2)) || ' day(s).');
+    END IF;
 EXCEPTION
     WHEN NO_DATA_FOUND THEN
         DBMS_OUTPUT.PUT_LINE('An experience with an ID of ' || in_xp_id || ' does not exist.');
 END proc_xp_duration;
 /
 SHOW ERRORS;
+-- Run 
+EXECUTE proc_xp_duration(2);
 
--- proc_staff_total
+
+
+
+
+-- proc_staff_total - returns total number of staff required for an experience
 CREATE OR REPLACE PROCEDURE proc_staff_total (in_xp_id experiences.experience_id%TYPE) IS
     vc_experience_name experiences.experience_name%TYPE;
 BEGIN
@@ -308,15 +374,21 @@ BEGIN
     vc_experience_name := func_xp_name(in_xp_id);
 
     -- Display the amount of staff required for the given experience.
-    DBMS_OUTPUT.PUT_LINE('The amount of staff required for experience "' || vc_experience_name || '" is: ' || func_staff_total(in_xp_id));
+    DBMS_OUTPUT.PUT_LINE('The number of staff required for experience "' || vc_experience_name || '" is: ' || func_staff_total(in_xp_id));
 EXCEPTION
     WHEN NO_DATA_FOUND THEN
         DBMS_OUTPUT.PUT_LINE('An experience with an ID of ' || in_xp_id || ' does not exist.');
 END proc_staff_total;
 /
 SHOW ERRORS;
+-- Run
+EXECUTE proc_staff_total(2);
 
--- proc_start_end_date
+
+
+
+
+-- proc_start_end_date - inserts the start and end date of an experience based on activities dates
 CREATE OR REPLACE PROCEDURE proc_start_end_date (in_xp_id experiences.experience_id%TYPE) IS
     CURSOR cur_activity_dates IS
     SELECT d.column_value
@@ -324,8 +396,8 @@ CREATE OR REPLACE PROCEDURE proc_start_end_date (in_xp_id experiences.experience
     WHERE e.experience_id = in_xp_id
     ORDER BY d.column_value ASC;
     
-    vd_start_date DATE;
-    vd_end_date DATE;
+    vd_max_date DATE := '01-JAN-1900';
+    vd_min_date DATE := '01-DEC-3000';
 
     date_null EXCEPTION;
     no_rows EXCEPTION;
@@ -335,19 +407,20 @@ BEGIN
     -- Fetch the experience_name and store it in vc_experience_name.
     vc_experience_name := func_xp_name(in_xp_id);
 
-    -- Retrieve and store the start date and end date in vd_start_date and vd_end_date.
+    -- Retrieve and store the min and max of the dates.
     FOR rec_cur_activity_dates IN cur_activity_dates LOOP
-        IF vd_start_date IS NULL THEN
-            vd_start_date := rec_cur_activity_dates.column_value;
-        ELSE
-            vd_end_date := rec_cur_activity_dates.column_value;
+        IF rec_cur_activity_dates.column_value < vd_min_date THEN
+            vd_min_date := rec_cur_activity_dates.column_value;
+        END IF;
+        IF rec_cur_activity_dates.column_value > vd_max_date THEN
+            vd_max_date := rec_cur_activity_dates.column_value;
         END IF;
     END LOOP;
 
     -- Attempt to update the start and end date for the given experience.
-    IF vd_start_date IS NOT NULL AND vd_end_date IS NOT NULL THEN
+    IF vd_min_date IS NOT NULL AND vd_max_date IS NOT NULL THEN
         UPDATE experiences
-        SET experience_date = date_varray_type(vd_start_date, vd_end_date)
+        SET experience_date = date_varray_type(vd_min_date, vd_max_date)
         WHERE experience_id = in_xp_id;
     ELSE
         RAISE date_null;
@@ -369,8 +442,120 @@ EXCEPTION
 END proc_start_end_date;
 /
 SHOW ERRORS;
+-- Test & run
+UPDATE experiences
+SET experience_date = date_varray_type('20-MAR-50', '23-JUN-44')
+WHERE experience_id = 3;
+
+SELECT experience_date FROM experiences WHERE experience_id = 3; -- Prints "DATE_VARRAY_TYPE('20-MAR-50', '23-JUN-44')".
+EXECUTE proc_start_end_date (3);
+SELECT experience_date FROM experiences WHERE experience_id = 3; -- Prints "DATE_VARRAY_TYPE('16-NOV-20', '17-NOV-20')".
+
+
+
+
+
+
+-- proc_print_experience_details - gives location and staff details for the given experience
+CREATE OR REPLACE PROCEDURE proc_print_experience_details(in_xp_id experiences.experience_id%TYPE) IS
+
+    vn_location_id NUMBER(30);
+    vc_address VARCHAR2(500);
+
+BEGIN
+    -- Fetch the location ID and store it.
+    SELECT location_id
+    INTO vn_location_id
+    FROM experiences 
+    WHERE experience_id = in_xp_id;
+
+    vc_address := func_print_location_address(vn_location_id);
+
+    DBMS_OUTPUT.PUT_LINE (CHR(10) || 'The experience ' || func_xp_name(in_xp_id) || ' will be taking place at ' || vc_address || CHR(13) || 
+    'Number of staff needed : ' || func_staff_total(in_xp_id) || CHR(10));
+    
+    EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('An experience with an ID of ' || in_xp_id || ' does not exist.');
+    END proc_print_experience_details;
+/
+SHOW ERRORS;
+
+-- Run
+EXECUTE proc_print_experience_details(100);
+
+
+
+
+
+-- proc_xp_season  - inserts season in experiences based on date
+CREATE OR REPLACE PROCEDURE proc_xp_season (in_xp_id experiences.experience_id%TYPE) IS
+    CURSOR cur_duration IS
+    SELECT d.*
+    FROM experiences e, TABLE(e.experience_date) d
+    WHERE e.experience_id = in_xp_id;
+
+    vc_experience_name experiences.experience_name%TYPE;
+
+    TYPE datearray IS VARRAY(2) OF DATE;
+    dates datearray;
+
+    rec_cur_duration cur_duration%ROWTYPE;
+
+BEGIN
+    -- Fetch the experience_name and store it in vc_experience_name.
+    vc_experience_name := func_xp_name(in_xp_id);
+
+    -- Initialise array and set size to 2.
+    dates := datearray();
+    dates.extend(2);
+
+    -- Open the cursor.
+    OPEN cur_duration;
+
+    -- Add dates for the given experience to the array.
+    FOR i IN 1..dates.count LOOP
+        FETCH cur_duration INTO rec_cur_duration;
+        dates(i) := rec_cur_duration.column_value;
+    END LOOP;
+
+    -- Close the cursor.
+    CLOSE cur_duration;
+
+    UPDATE experiences
+    SET season = func_season(dates(1))
+    WHERE experience_id = in_xp_id;
+
+
+    -- Display success message.
+        DBMS_OUTPUT.PUT_LINE('The season column for experience "' || vc_experience_name || '" has been inserted. ');
+
+EXCEPTION
+
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('An experience with an ID of ' || in_xp_id || ' does not exist.');
+
+END proc_xp_season;
+/
+SHOW ERRORS;
+-- Run 
+EXECUTE proc_xp_season(2);
+
+
+
+
+
+-- COMMIT CHANGES
+COMMIT;
+
+
+
 
 -- === TESTS FOR PROCEDURES ===
+-- Check creation -- 12 in total
+SELECT object_name FROM user_procedures WHERE object_name LIKE 'PROC_%';
+
+
 -- proc_print_sponsor_address
 exec proc_print_sponsor_address; -- Prints "wrong number or type of arguments in call to 'PROC_PRINT_SPONSOR_ADDRESS'"
 exec proc_print_sponsor_address('a'); -- Prints "numeric or value error: character to number conversion error"
@@ -459,3 +644,24 @@ exec proc_start_end_date(6); -- Prints "The start and end dates for the experien
 -- Delete the experience.
 DELETE FROM experiences
 WHERE experience_id = 6;
+
+-- proc_print_experience_details
+exec proc_print_experience_details(1); -- Prints "The experience LUXURY DINNER FOR 4 will be taking place at 17 ALPHA HOUSE [...] Number of staff needed : 6."
+exec proc_print_experience_details(100); -- Prints "An experience with an ID of 100 does not exist."
+
+-- proc_xp_season
+UPDATE experiences 
+SET season = 'WINTER' 
+WHERE experience_id = 2; 
+SELECT season FROM experiences WHERE experience_id = 2; -- WINTER
+exec proc_xp_season(2); -- The season column for experience "COMEDY NIGHT" has been inserted.
+SELECT season FROM experiences WHERE experience_id = 2; -- AUTUMN
+
+exec proc_xp_season(3456); -- An experience with an ID of 3456 does not exist.
+
+UPDATE experiences 
+SET season = 'WINTER' 
+WHERE experience_id = 3; 
+SELECT season FROM experiences WHERE experience_id = 3;
+exec proc_xp_season(3);-- The season column for experience "COMEDY NIGHT" has been inserted.
+SELECT season FROM experiences WHERE experience_id = 3; -- SPRING

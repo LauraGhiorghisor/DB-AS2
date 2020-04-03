@@ -55,6 +55,14 @@ VALUES(seq_sponsors.nextval, UPPER('ANDREW'), UPPER('ADAMS'), UPPER('APPLEWOOD L
 	                      (contact_type('FACEBOOK', 'APPLEWOOD LTD CAMBRIDGE', 'MESSAGE ONLY M-F 8-5')),
                           (contact_type('COMPANY PHONE', '01604786332', 'ONLY M-F 8-5')),
 						  (contact_type('EMAIL', 'CONTACT@APPLEWOOD.CO.UK', NULL))), '20-MAY-1997');
+-- Same address
+INSERT INTO sponsors(sponsor_id, sponsor_firstname, sponsor_surname, company_name, address, contact, registration_date)
+VALUES(seq_sponsors.nextval, UPPER('John'), UPPER('Wood'), UPPER('WOODY LTD'), 
+       address_type('34', 'COPPER STREET', 'CAMBRIDGE', 'CAMBRIDGESHIRE', 'CB2 5EE', 'UK'),
+	   contact_varray_type(
+	                      (contact_type('FACEBOOK', 'WOODY LTD CAMBRIDGE', 'MESSAGE ONLY M-F 8-5')),
+                          (contact_type('COMPANY PHONE', '01604336332', 'ONLY M-F 8-5')),
+						  (contact_type('EMAIL', 'CONTACT@WOODY.CO.UK', NULL))), '20-MAY-1999');
 	   
 INSERT INTO sponsors(sponsor_id, sponsor_firstname, sponsor_surname, company_name, address, contact, registration_date)
 VALUES(seq_sponsors.nextval, 'BENJAMIN', 'BROOKLYN', 'BONFIT LTD', 
@@ -88,7 +96,8 @@ VALUES(seq_sponsors.nextval, 'ELY', 'EXETER', 'ECOMMERCE UK',
 	   contact_varray_type(
 	                      (contact_type('FACEBOOK', 'ECOMMERCE UK', NULL)),
                           (contact_type('PERSONAL PHONE', '07534672889', 'CAN CALL EVEN AFTER 6 PM')),
-						  (contact_type('EMAIL', 'ELY@ECOMMERCE.CO.UK', 'FASTER REPLIES'))), '20-MAR-2020');	   
+						  (contact_type('EMAIL', 'ELY@ECOMMERCE.CO.UK', 'FASTER REPLIES'))), 
+		'20-MAR-2020');	   
 
 
 
@@ -111,11 +120,18 @@ UPDATE locations SET address =
 WHERE a.street = 'BENJAMIN STREET')
 WHERE location_id = 2;
 
+
 -- using regular insert
 INSERT INTO locations(location_id, description, address)
 SELECT seq_locations.nextval, 'HOTEL WITH SPA, POOL, SAUNA, 5 STARS', REF(a)
 FROM addresses a
 WHERE a.street = 'CECIL STREET';
+
+-- Same city
+INSERT INTO locations(location_id, description, address)
+SELECT seq_locations.nextval, 'HOTEL WITH SPA, POOL, SAUNA AND BEAUTY CENTER, 5 STARS', REF(a)
+FROM addresses a
+WHERE a.city = 'BATH';
 
 INSERT INTO locations(location_id, description, address)
 SELECT seq_locations.nextval, 'A LA CARTE RESTAURANT, VARIOUS CHOICES. PLENTY OF PARKING', REF(a)
@@ -126,6 +142,8 @@ INSERT INTO locations(location_id, description, address)
 SELECT seq_locations.nextval, 'LOCATION HAS WINE CELLAR, BAR WITH MULTIPLE SPIRITS AND SNACKS', REF(a)
 FROM addresses a
 WHERE a.street = 'ELMWOOD STREET';
+
+
 
 --Experiences Table
 INSERT INTO experiences(experience_id, experience_nature_id, experience_name, season, experience_date, location_id, description, activities)
@@ -144,7 +162,7 @@ activity_table_type(
 	  );	  
 	  
 INSERT INTO experiences(experience_id, experience_nature_id, experience_name, season, experience_date, location_id, description, activities)
-VALUES(seq_experiences.nextval, 3, 'HELICOPTER RIDE', 'SUMMER', date_varray_type('01-MAY-2020', '02-MAY-2020'), 3, 'MAX OF 2 PEOPLE PLUS STAFF,  PHOTOS INCLUDED', 
+VALUES(seq_experiences.nextval, 3, 'HELICOPTER RIDE', 'SPRING', date_varray_type('01-MAY-2020', '02-MAY-2020'), 3, 'MAX OF 2 PEOPLE PLUS STAFF,  PHOTOS INCLUDED', 
 activity_table_type(
                     activity_type('PHOTOSHOOT', 1, date_varray_type('01-MAY-2020', '01-MAY-2020')),
 					activity_type('RIDE', 1, date_varray_type('02-MAY-2020', '02-MAY-2020')))
@@ -164,11 +182,31 @@ activity_table_type(
 					activity_type('BRING A FRIEND', 0, date_varray_type('11-MAR-2020', '12-MAR-2020')),
 					activity_type('FINAL BAKEOFF', 0, date_varray_type('13-MAR-2020', '13-MAR-2020')))
 	  );
-	  
+-- Same location
+-- No column specification.
+INSERT INTO experiences
+VALUES(seq_experiences.nextval, 5, 'GIRLS'' DETOX WEEK', 'SUMMER', date_varray_type('01-JUL-2020', '08-JUL-2020'), 2, 'FULL GIRL''S WEEK OF DETOX', 
+activity_table_type(
+                    activity_type('INDUCTION', 6, date_varray_type('01-JUL-2020', '01-JUL-2020')),
+					activity_type('BATH IN BATH', 2, date_varray_type('02-JUL-2020', '02-JUL-2020')),
+					activity_type('PHYSICAL TRAINING', 5, date_varray_type('03-JUL-2020', '05-JUL-2020')),
+					activity_type('NUTRITION COURSE', 4, date_varray_type('06-JUL-2020', '06-JUL-2020')),
+					activity_type('SPA DAY', 0, date_varray_type('03-JUL-2020', '05-JUL-2020')))
+	  );
 	  
 --Tickets TABLE
+
+/* The assumption is that tickets may be sold with different tier prices, 
+not specified in the current schema. The ticket_number distinguishes between such entries.
+*/
 INSERT INTO tickets(ticket_number, experience_id, sponsor_id, price, date_sold)
 VALUES(seq_tickets.nextval, 1, 1, 1000.00, '23-MAR-2020');
+
+INSERT INTO tickets(ticket_number, experience_id, sponsor_id, price, date_sold)
+VALUES(seq_tickets.nextval, 1, 1, 1000.00, '23-MAR-2020');
+
+INSERT INTO tickets(ticket_number, experience_id, sponsor_id, price, date_sold)
+VALUES(seq_tickets.nextval, 1, 1, 1200.00, '23-MAR-2020');
 
 INSERT INTO tickets(ticket_number, experience_id, sponsor_id, price, date_sold)
 VALUES(seq_tickets.nextval, 2, 2, 550.00, '13-FEB-2020');
@@ -185,6 +223,8 @@ VALUES(seq_tickets.nextval, 4, 4, 45.00, '14-FEB-2020');
 INSERT INTO tickets(ticket_number, experience_id, sponsor_id, price, date_sold)
 VALUES(seq_tickets.nextval, 5, 5, 80.00, '16-JAN-2020');
 
+INSERT INTO tickets(ticket_number, experience_id, sponsor_id, price, date_sold)
+VALUES(seq_tickets.nextval, 2, 1, 550.00, '13-FEB-2020');
 
 -- testing inserts
 SELECT * FROM addresses;
@@ -247,4 +287,5 @@ INSERT INTO tickets(ticket_number, experience_id, sponsor_id, price)
 VALUES(seq_tickets.nextval, 4, 4, 9999999.01);
 -- check constraint (CSY2038_152.CK_PRICE) violated
 
+-- COMMIT CHANGES
 COMMIT;
