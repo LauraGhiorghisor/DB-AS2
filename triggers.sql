@@ -181,15 +181,15 @@ SELECT registration_date FROM sponsors WHERE sponsor_firstname = 'TEST';
 CREATE OR REPLACE TRIGGER trig_security
 BEFORE INSERT OR UPDATE OR DELETE 
 ON experiences
-
+FOR EACH ROW
+WHEN ((INSTR(TO_CHAR(SYSDATE, 'DAY'),'SATURDAY')>0 OR INSTR(TO_CHAR(SYSDATE, 'DAY'),'SUNDAY')>0) OR 
+(TO_CHAR(SYSDATE, 'HH24') < 9 OR TO_CHAR(Sysdate, 'HH24') > 16))
 DECLARE
     no_weekends EXCEPTION;
     outside_hours EXCEPTION;
     PRAGMA exception_init(no_weekends, -20111);
     PRAGMA exception_init(outside_hours, -20112);
 BEGIN
-
- DBMS_OUTPUT.PUT_LINE('deleting secutiry thing');
 
 IF (INSTR(TO_CHAR(SYSDATE, 'DAY'),'SATURDAY')>0 OR INSTR(TO_CHAR(SYSDATE, 'DAY'),'SUNDAY')>0) THEN  
     RAISE no_weekends;
@@ -210,9 +210,10 @@ END trig_security;
 SHOW ERRORS
 
 -- Testing test_script_36
-DELETE FROM experiences WHERE experience_id = 40;
+DELETE FROM experiences WHERE experience_id = 6;
 SELECT experience_id FROM experiences;
 -- CANNOT ALTER DATA OUTSIDE WORKING HOURS
+-- Amend trigger for testing IF (TO_CHAR(SYSDATE, 'HH24') < 9 OR TO_CHAR(Sysdate, 'HH24') > 12)  gives successful insert for working hours.
 
 -- ALTER TRIGGER trig_security DISABLE;
 -- ALTER TRIGGER trig_security ENABLE;

@@ -394,7 +394,7 @@ BEGIN
     IF func_duration(dates(1), dates(2)) = 0 THEN 
         DBMS_OUTPUT.PUT_LINE('The duration of experience "' || vc_experience_name || '" is 1 day.');
     ELSE 
-        DBMS_OUTPUT.PUT_LINE('The duration of experience "' || vc_experience_name || '" is ' || func_duration(dates(1), dates(2)) || ' day(s).');
+        DBMS_OUTPUT.PUT_LINE('The duration of experience "' || vc_experience_name || '" is ' || (func_duration(dates(1), dates(2))+1) || ' days.');
     END IF;
 EXCEPTION
     WHEN NO_DATA_FOUND THEN
@@ -403,7 +403,7 @@ END proc_xp_duration;
 /
 SHOW ERRORS;
 -- Run test_script_25
-EXECUTE proc_xp_duration(2);
+EXECUTE proc_xp_duration(3);
 /*
 The duration of experience "COMEDY NIGHT" is 1 day.
 */

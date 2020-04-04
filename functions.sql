@@ -35,7 +35,7 @@ END proc_xp_name;
 SHOW ERRORS;
 
 -- Testing "test_script_6'
-EXECUTE proc_xp_name(1);
+EXECUTE proc_xp_name(20);
 -- The experience name is "LUXURY DINNER FOR 4".
 
 
@@ -92,7 +92,7 @@ CREATE OR REPLACE PROCEDURE proc_test_duration IS
 
 BEGIN 
 
-	DBMS_OUTPUT.PUT_LINE ('Duration is ' || func_duration('01-JAN-1991', '30-JAN-1991'));
+	DBMS_OUTPUT.PUT_LINE ('Duration is ' || func_duration('01-JAN-1991', '02-JAN-1991'));
 
 END proc_test_duration;
 /
