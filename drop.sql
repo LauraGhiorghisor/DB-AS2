@@ -6,7 +6,7 @@
 
 -- @C:\DB-AS2\drop.sql
 -- @/Users/Laura/csy2038/DB-AS2/drop.sql
-
+-- @C:\Users\Daiana\DB-AS2\drop.txt
 
 
 

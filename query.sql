@@ -6,7 +6,7 @@
 
 -- @C:\DB-AS2\query.sql
 -- @/Users/Laura/csy2038/DB-AS2/query.sql
-
+-- @C:\Users\Daiana\DB-AS2\query.txt
 
 -- QUERIES 
 -- Object table: addresses

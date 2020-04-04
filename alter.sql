@@ -6,6 +6,8 @@
 
 -- @C:\DB-AS2\alter.sql
 -- @/Users/Laura/csy2038/DB-AS2/alter.sql
+-- @C:\Users\Daiana\DB-AS2\alter.txt
+
 
 -- PRIMARY KEYS
 -- pk_sponsors

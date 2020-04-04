@@ -6,6 +6,7 @@
 
 -- @C:\DB-AS2\procedures.sql
 -- @/Users/Laura/csy2038/DB-AS2/procedures.sql
+-- @C:\Users\Daiana\DB-AS2\procedures.txt
 
 SET SERVEROUTPUT ON;
 

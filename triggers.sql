@@ -6,6 +6,8 @@
 
 -- @C:\DB-AS2\triggers.sql
 -- @/Users/Laura/csy2038/DB-AS2/triggers.sql
+-- @C:\Users\Daiana\DB-AS2\triggers.txt
+
 -- CSY2038_152@student/18408400
 
 SET SERVEROUTPUT ON

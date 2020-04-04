@@ -7,7 +7,7 @@
 -- @C:\DB-AS2\functions.sql
 -- @/Users/Laura/csy2038/DB-AS2/functions.sql
 -- @C:\Users\Daiana\Desktop\functions.txt
-
+-- @C:\Users\Daiana\DB-AS2\functions.txt
 
 
 SET SERVEROUTPUT ON

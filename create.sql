@@ -6,6 +6,7 @@
 
 -- @C:\DB-AS2\create.sql
 -- @/Users/Laura/csy2038/DB-AS2/create.sql
+-- @C:\Users\Daiana\DB-AS2\create.txt
 
 -- CREATE TYPES
 -- contact_type
