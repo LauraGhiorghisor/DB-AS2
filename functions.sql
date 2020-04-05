@@ -35,7 +35,7 @@ END proc_xp_name;
 SHOW ERRORS;
 
 -- Testing "test_script_6'
-EXECUTE proc_xp_name(20);
+EXECUTE proc_xp_name(1);
 -- The experience name is "LUXURY DINNER FOR 4".
 
 
@@ -99,7 +99,7 @@ END proc_test_duration;
 SHOW ERRORS
 -- Testing "test_script_8"
 EXECUTE proc_test_duration
--- Duration is 29
+-- Duration is 1
 
 
 

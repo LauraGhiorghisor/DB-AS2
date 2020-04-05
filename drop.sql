@@ -12,6 +12,9 @@
 
 -- DROP FUNCTIONS (and testing procedures)
 
+-- Run before running final version
+-- DELETE FROM user_procedures WHERE object_name LIKE 'FUNC_%';
+
 -- DROP FUNCTIONS
 DROP FUNCTION func_staff_total;
 DROP FUNCTION func_duration;
@@ -152,4 +155,5 @@ COMMIT;
 
 -- Testing
 SELECT * FROM user_objects; 
+-- SELECT object_name FROM user_objects;
 -- no rows selected

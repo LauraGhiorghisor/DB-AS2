@@ -258,7 +258,7 @@ VALUES(seq_sponsors.nextval, 'TEST5', 'TESTY', 'ECOMMERCE UK',
 						  (contact_type('EMAIL', 'ELY@ECOMMERCE.CO.UK', 'FASTER REPLIES'))), 
 		'20-MAR-2020');	   
 SELECT sponsor_id FROM sponsors WHERE sponsor_firstname = 'TEST5';
-
+-- Use ID from above;
 DELETE FROM sponsors WHERE sponsor_id = 12; 
 -- safe to delete: 1 row deleted.
 DELETE FROM sponsors WHERE sponsor_id = 2; 
@@ -275,7 +275,7 @@ SELECT sponsor_id FROM sponsors;
 -- FROM sys.all_users
 -- ORDER BY username;
 
-
+-- With Laura's log in
 CREATE OR REPLACE TRIGGER trig_schema_delete
 AFTER DROP 
 ON CSY2038_152.SCHEMA
@@ -291,6 +291,24 @@ SHOW ERRORS
 -- Testing test_script_38
 CREATE TABLE test_trig_drops (td_id NUMBER(10));
 DROP TABLE test_trig_drops;
+
+-- With Daiana's log in
+CREATE OR REPLACE TRIGGER trig_schema_delete
+AFTER DROP 
+ON CSY2038_152.SCHEMA
+
+BEGIN
+
+
+  DBMS_OUTPUT.PUT_LINE('DROP COMPLETED!');
+END trig_schema_delete;
+/
+SHOW ERRORS
+
+-- Testing test_script_38
+CREATE TABLE test_trig_drops (td_id NUMBER(10));
+DROP TABLE test_trig_drops;
+
 
 -----------------------------------------------------------
 
@@ -313,6 +331,8 @@ SELECT * FROM global_name; -- STUDENT.NENE.AC.UK
 
 
 -- trig_user_log - records user log in date
+
+-- with Laura's log in
 CREATE OR REPLACE TRIGGER trig_user_log
 AFTER LOGON
 ON CSY2038_152.SCHEMA 
@@ -332,6 +352,27 @@ CSY2038_152@student/18408400
 SELECT * FROM userlog ORDER BY entry_id ASC;
 -- 03-APR-20
 -----------------------------------------------------------
+
+
+-- With Daiana's log in
+-- trig_user_log - records user log in date
+CREATE OR REPLACE TRIGGER trig_user_log
+AFTER LOGON
+ON CSY2038_116.SCHEMA 
+
+BEGIN
+    INSERT INTO userlog
+    VALUES (seq_userlog.nextval, SYSDATE);
+
+END trig_db_hello;
+/
+SHOW ERRORS
+-- Testing - test_script_40
+-- Log out and log in
+DISCONNECT
+CONNECT
+CSY2038_152@student/18408400
+SELECT * FROM userlog ORDER BY entry_id ASC;
 
 
 
