@@ -39,7 +39,7 @@ DROP PROCEDURE proc_xp_annual_takings_total;
 DROP PROCEDURE proc_xp_takings_total;
 DROP PROCEDURE proc_xp_price_avg;
 DROP PROCEDURE proc_test_duration;
-DROP PROCEDURE proc_staff_total;
+-- DROP PROCEDURE proc_staff_total;
 
 -- Drop procedures
 DROP PROCEDURE proc_print_sponsor_address;
@@ -65,7 +65,7 @@ DROP TRIGGER trig_sponsors_reg_date;
 DROP TRIGGER trig_security;
 DROP TRIGGER trig_delete_sponsor;
 DROP TRIGGER trig_schema_delete;
-DROP TRIGGER trig_db_hello;
+-- DROP TRIGGER trig_db_hello;
 DROP TRIGGER trig_user_log;
 
 

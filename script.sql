@@ -9,6 +9,13 @@
 -- @C:\DB-AS2\script.sql
 -- @/Users/Laura/csy2038/DB-AS2/script.sql
 
+
+COLUMN object_name FORMAT A30;
+COLUMN object_type FORMAT A12;
+PURGE RECYCLEBIN;
+SELECT object_name, object_type FROM user_objects;
+
+
 -- drop
 @C:\DB-AS2\drop.sql
 @/Users/Laura/csy2038/DB-AS2/drop.sql
@@ -48,3 +55,10 @@
 @C:\DB-AS2\triggers.sql
 @/Users/Laura/csy2038/DB-AS2/triggers.sql
 @C:\Users\Daiana\DB-AS2\triggers.txt
+
+
+
+COLUMN object_name FORMAT A30;
+COLUMN object_type FORMAT A12;
+PURGE RECYCLEBIN;
+SELECT object_name, object_type FROM user_objects;
