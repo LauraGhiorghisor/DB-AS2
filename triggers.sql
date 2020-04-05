@@ -308,7 +308,7 @@ SHOW ERRORS
 -- Testing test_script_38
 CREATE TABLE test_trig_drops (td_id NUMBER(10));
 DROP TABLE test_trig_drops;
-
+-- DROP COMPLETED!
 
 -----------------------------------------------------------
 

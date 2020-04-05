@@ -404,7 +404,7 @@ END proc_xp_duration;
 /
 SHOW ERRORS;
 -- Run test_script_25
-EXECUTE proc_xp_duration(3);
+EXECUTE proc_xp_duration(2);
 /*
 The duration of experience "COMEDY NIGHT" is 1 day.
 */
