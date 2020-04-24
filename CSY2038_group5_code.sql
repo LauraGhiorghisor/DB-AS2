@@ -2686,12 +2686,11 @@ SELECT * FROM user_objects;
 -- @C:\DB-AS2\script.sql
 -- @/Users/Laura/csy2038/DB-AS2/script.sql
 
-
+/*
 COLUMN object_name FORMAT A30;
 COLUMN object_type FORMAT A12;
 PURGE RECYCLEBIN;
 SELECT object_name, object_type FROM user_objects;
-
 
 -- drop
 @C:\DB-AS2\drop.sql
@@ -2738,10 +2737,8 @@ SELECT object_name, object_type FROM user_objects;
 COLUMN object_name FORMAT A30;
 COLUMN object_type FORMAT A12;
 PURGE RECYCLEBIN;
-SELECT object_name, object_type FROM user_objects;	 
-			 
-			 
-			 
+SELECT object_name, object_type FROM user_objects;	 		 
+*/			 
 			 
 			 
 
